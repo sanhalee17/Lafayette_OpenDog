@@ -19,16 +19,16 @@ lt= 12.233;         %length of lower leg in inch
 
 
 %distance between the hip joint and the foot
-d=sqrt((x.^2+y.^2));
+d=sqrt((x.^2+(y-3).^2));
 
 %finding angles
 theta_p = atan(y./x);
 
 theta_k = acos((lf.^2 + d.^2 - lt.^2)/(2.*d.*lf)) *(180/pi);
 
-theta_hkp = acos((12.645^2+14.015^2-d.^2)/(2.*12.645.*14.015)) * (180/pi); %in radians
+theta_hkp = acos((12.645^2+14.015^2-d.^2)/(2.*12.645.*14.015)) * (180/pi); 
 
-theta_h = acos(3.872/4.047) *(180/pi); %in radians
+theta_h = acos(3.872/4.047) *(180/pi); 
 
 theta_k_shift=acos((10.432^2 + 14.283^2 - 4.669^2)/(2*10.432*14.283))*(180/pi);
 
