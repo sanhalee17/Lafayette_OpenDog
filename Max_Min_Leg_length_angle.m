@@ -20,6 +20,7 @@ max_length = sqrt(x_max ^2 + y_max^2)
 
 %extended leg angle calculation
 max_angle_E = atan(11.5/13.75)*(180/pi) %degree
+min_angle_E = atan(23.625/13.25)*(180/pi)
 
 
 %contracted leg angle culation
