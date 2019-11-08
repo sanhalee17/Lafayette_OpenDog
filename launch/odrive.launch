@@ -1,0 +1,35 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+    <arg name="connect_on_startup"   default="false"/>
+    <!--<arg name="calibrate_on_startup" default="true"/> -->
+    <!--<arg name="engage_on_startup"    default="true"/> -->
+
+    <!--Edit by GGC on July 3 -->
+    <arg name="control_mode"   default="position"/>
+
+    <arg name="publish_odom"   default="true"/>
+    <arg name="publish_tf"     default="false"/>
+    
+    <arg name="output"   default="screen"/>
+    <arg name="respawn"   default="false"/>
+    
+    <node pkg="opendog_ros" type="odrive_node" name="odrive" ns="odrive" 
+            output="$(arg output)" respawn="$(arg respawn)">
+        <param name="wheel_track" value="0.285"/>
+        <param name="tyre_circumference" value="0.341"/>
+        
+        <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
+        <!--<param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> -->
+        <!--<param name="engage_on_startup"    value="$(arg engage_on_startup)"/> -->
+
+        <!--Edit by GGC on July 3 -->
+        <param name="control_mode"    value="$(arg control_mode)"/>
+        
+        <param name="publish_odom"    value="$(arg publish_odom)"/>
+        <param name="publish_tf"      value="$(arg publish_tf)"/>
+    </node>
+
+    <!--Edit by GGC on July 3 -->
+    <node pkg="rqt_ez_publisher" type="rqt_ez_publisher" name="rqt_ez_publisher" output="screen"/>
+
+</launch>
