@@ -8,7 +8,7 @@ import Queue   # might not be needed
 import rospy
 import sys
 import roslib
-roslib.load_manifest('opendog_ros')
+roslib.load_manifest('odrive_ros')
 
 # Imports message type
 from geometry_msgs.msg import PoseStamped

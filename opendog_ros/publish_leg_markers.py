@@ -9,7 +9,7 @@
 import rospy
 import sys
 import roslib
-roslib.load_manifest('opendog_ros')
+roslib.load_manifest('odrive_ros')
 
 import tf
 import tf.transformations

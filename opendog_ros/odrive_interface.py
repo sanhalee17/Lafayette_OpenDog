@@ -37,6 +37,9 @@ class ODriveInterfaceAPI(object):
     # _preroll_started = True
     # _preroll_completed = True
     #engaged = False
+
+    #Added Nov.13.2019 by SL:
+    initial_position = (8912 * 15) #going fifteen revolutions back from the limit switch location 
     
     def __init__(self, logger=None):
         # Edit by GGC on June 14: 
@@ -326,11 +329,17 @@ class ODriveInterfaceAPI(object):
         self.axes[0].controller.config.control_mode = CTRL_MODE_POSITION_CONTROL
         self.axes[0].controller.config.vel_limit = 200000.0
         self.axes[0].controller.pos_setpoint = 0
+        
+        #added Nov.13.2019 by SL:
+        self.axes[0].encodeer.config.offset = -49152
 
         self.axes[1].requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
         self.axes[1].controller.config.control_mode = CTRL_MODE_POSITION_CONTROL
         self.axes[1].controller.config.vel_limit = 200000.0
         self.axes[1].controller.pos_setpoint = 0
+
+        #added Nov.13.2019 by SL:
+        self.axes[0].encoder.config.offset = -49152
 
         return True
 
@@ -360,6 +369,21 @@ class ODriveInterfaceAPI(object):
             print(dump_errors(self.driver))
             dump_errors(self.driver, True)
             return True
+
+
+    #added Nov.13.2019 by SL:
+    #this definition is adding an offset to encoders
+    def home(self)
+        if not self.driver:
+            self.logger.errr("Not connected.")
+            return False
+        else:
+            print(reset_encoders(self.driver)
+            home_encoders(self.driver, True)
+            home_position = self.requested_state
+            pos_setpoint = home_position - initial_position
+
+
 
 
 

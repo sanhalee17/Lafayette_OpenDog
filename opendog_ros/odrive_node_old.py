@@ -9,7 +9,7 @@ import tf2_ros
 
 # Edit by GGC on June 14: 
 # Imports message types and services from several libraries
-from std_msgs.msg import Float64, Int32,Bool
+from std_msgs.msg import Float64, Int32
 from geometry_msgs.msg import Twist, TransformStamped, Pose
 from nav_msgs.msg import Odometry
 import std_srvs.srv
@@ -69,12 +69,6 @@ class ODriveNode(object):
     calibrate_on_startup = False
     engage_on_startup = False
 
-    #limit switch global variables
-    # lim1low = False
-    # lim1high = False
-    # lim2low = False
-    # lim2high = False
-
     
     def __init__(self):
         self.axis_for_right = float(rospy.get_param('~axis_for_right', 0)) # if right calibrates first, this should be 0, else 1
@@ -97,21 +91,14 @@ class ODriveNode(object):
         self.odom_frame      = rospy.get_param('~odom_frame', "odom")
         self.base_frame      = rospy.get_param('~base_frame', "base_link")
         self.odom_calc_hz    = rospy.get_param('~odom_calc_hz', 100)  # Edit by GGC on June 20
-        self.pos_cmd_topic_name = rospy.get_param('~pos_cmd_topic',"/cmd_pos") 
         
         self.mode            = rospy.get_param('~control_mode', "position")
-        self.lim1low_topic   = rospy.get_param('~lim1low_topic', "odrive1_low_tib")
-        self.lim1high_topic   = rospy.get_param('~lim1high_topic', "odrive1_high_tib")
-        self.lim2low_topic   = rospy.get_param('~lim2low_topic', "odrive1_low_fem")
-        self.lim2high_topic   = rospy.get_param('~lim2high_topic', "odrive1_high_fem")
         print(self.mode)
 
-        # rospy.on_shutdown(self.terminate)
+        rospy.on_shutdown(self.terminate)
 
         rospy.Service('connect_driver',    std_srvs.srv.Trigger, self.connect_driver)
         rospy.Service('disconnect_driver', std_srvs.srv.Trigger, self.disconnect_driver)
-        rospy.Service('stop_motor', std_srvs.srv.Trigger, self.stop_motor)
-        rospy.Service('reset_encoder', std_srvs.srv.Trigger, self.reset_encoder)
     
         rospy.Service('calibrate_motors',  std_srvs.srv.Trigger, self.calibrate_motor)
         rospy.Service('engage_motors',     std_srvs.srv.Trigger, self.engage_motor)
@@ -124,7 +111,7 @@ class ODriveNode(object):
         # Edit by GGC on June 28: Determine subscribed topic based on control mode
         # Edit by GGC on July 4: Changing "is" to "==" allows the if-else block to work properly
         if self.mode == "position":
-            self.pos_subscribe = rospy.Subscriber(self.pos_cmd_topic_name, Pose, self.cmd_pos_callback, queue_size=2)
+            self.pos_subscribe = rospy.Subscriber("/cmd_pos", Pose, self.cmd_pos_callback, queue_size=2)
             print("Subscribed to /cmd_pos")
         elif self.mode == "velocity":
             self.vel_subscribe = rospy.Subscriber("/cmd_vel", Twist, self.cmd_vel_callback, queue_size=2)
@@ -134,11 +121,6 @@ class ODriveNode(object):
             # Debugging line to see if something went wrong with self.mode assignment...
             # ...or the if statement syntax
             print("Can't understand you, launch file")
-        self.lim1low_sub = rospy.Subscriber(self.lim1low_topic ,Bool,self.lim1lowcallback)
-        self.lim1high_sub = rospy.Subscriber(self.lim1high_topic ,Bool,self.lim1highcallback)
-        self.lim2low_sub = rospy.Subscriber(self.lim2low_topic ,Bool,self.lim2lowcallback)
-        self.lim2high_sub = rospy.Subscriber(self.lim2high_topic ,Bool,self.lim2highcallback)
-
 
         if self.publish_current:
             self.current_loop_count = 0
@@ -192,7 +174,7 @@ class ODriveNode(object):
             self.tf_publisher = tf2_ros.TransformBroadcaster()
             self.tf_msg = TransformStamped()
             self.tf_msg.header.frame_id = self.odom_frame
-            # self.tf_msg.child_frame_id  = self.base_frames
+            self.tf_msg.child_frame_id  = self.base_frame
             self.tf_msg.transform.translation.x = 0.0
             self.tf_msg.transform.translation.y = 0.0
             self.tf_msg.transform.translation.z = 0.0
@@ -200,32 +182,8 @@ class ODriveNode(object):
             self.tf_msg.transform.rotation.y = 0.0
             self.tf_msg.transform.rotation.w = 0.0
             self.tf_msg.transform.rotation.z = 1.0
-        #set up vars to hold limit switch states
-        self.lim1low = False
-        self.lim1high = False
-        self.lim2low = False
-        self.lim2high = False
-
 
         
-    def lim1lowcallback(self,data):
-        rospy.logwarn(data)
-        self.lim1low = data
-
-    def lim1highcallback(self,data):
-        rospy.logwarn(data)
-        self.lim1high = data
-
-    def lim2lowcallback(self,data):
-        rospy.logwarn(data)
-        self.lim2low = data
-
-    def lim2highcallback(self,data):
-        rospy.logwarn(data)
-        self.lim2high = data
-
-
-
     def main_loop(self):
         # Main control, handle startup and error handling
         # while a ROS timer will handle the high-rate (~50Hz) comms + odometry calcs
@@ -298,11 +256,6 @@ class ODriveNode(object):
                 # for current
                 self.current_l = self.driver.left_axis.motor.current_control.Ibus
                 self.current_r = self.driver.right_axis.motor.current_control.Ibus
-
-                #for encoders
-                #Added Nov.13.2019 by SL:
-                self.requested_state = self.AXIS_STATE_ENCODER_INDEX_SEARCH
-                
                 
             except:
                 rospy.logerr("Fast timer exception reading:" + traceback.format_exc())
@@ -400,10 +353,10 @@ class ODriveNode(object):
                 pass
             
         
-    # def terminate(self):
-    #     self.fast_timer.shutdown()
-    #     if self.driver:
-    #         self.driver.release()
+    def terminate(self):
+        self.fast_timer.shutdown()
+        if self.driver:
+            self.driver.release()
     
     # ROS services
     def connect_driver(self, request):
@@ -482,24 +435,6 @@ class ODriveNode(object):
                 return (False, "Failed calibration.")
                 
         return (True, "Calibration success.")
-
-    def home_encoder(self, request):
-        if not self.home_encoder:
-            rospy.logger("Not homed")
-            return (False, "Not homed")
-
-        if self.lim1high == True:
-            return (home_encoders)
-
-        if self.lim2low == True:
-            return (home_encoders)
-
-    def stop_motor(self, request):
-        if lim1low_topic == True:
-            return (self.current_l == 0)
-
-        if lim2high_topic == True:
-            return (self.current_r == 0)
                     
     def engage_motor(self, request):
         # Edit by GGC on June 14: 
@@ -603,9 +538,9 @@ class ODriveNode(object):
         # print (left_linear_val,right_linear_val)
         
         # Editted by GGC on June 21:
-        # rad_to_count = self.encoder_cpr / (2 * math.pi)
-        # # left_linear_val, right_linear_val = msg.linear.x*rad_to_count, msg.angular.z*rad_to_count   # Edit by GGC on June 28
-        # left_linear_val, right_linear_val = msg.linear.x*10, msg.angular.z*10   # Edit by GGC, July 3: rqt sliders limited to +-10000
+        rad_to_count = self.encoder_cpr / (2 * math.pi)
+        # left_linear_val, right_linear_val = msg.linear.x*rad_to_count, msg.angular.z*rad_to_count   # Edit by GGC on June 28
+        left_linear_val, right_linear_val = msg.linear.x*10, msg.angular.z*10   # Edit by GGC, July 3: rqt sliders limited to +-10000
 
         # if wheel speed = 0, stop publishing after sending 0 once. #TODO add error term, work out why VESC turns on for 0 rpm
         
@@ -615,11 +550,6 @@ class ODriveNode(object):
         #wheel_left.set_speed(v_l)
         #wheel_right.set_speed(v_r)
         
-        
-        rad_to_count = self.encoder_cpr / (2 * math.pi)
-        right_linear_val = msg.angular.z*10
-        left_linear_val = msg.linear.x*10    # Edit by GGC, July 3: rqt sliders limited to +-10000
-
         #rospy.logdebug("Driving left: %d, right: %d, from linear.x %.2f and angular.z %.2f" % (left_linear_val, right_linear_val, msg.linear.x, msg.angular.z))
         try:
             drive_command = ('drive', (left_linear_val, right_linear_val))
@@ -633,13 +563,8 @@ class ODriveNode(object):
         deg_to_rad = math.pi / 180
         rad_to_count = 8192 / (2 * math.pi)
 
-        # Edit by GGC on July 15: If it is receiving degrees...
-        # left_linear_val, right_linear_val = msg.position.y * deg_to_rad * rad_to_count, msg.position.x * deg_to_rad * rad_to_count
-        
-        # If it is receiving counts...
-        # left = femur (axis 1), right = tibia (axis 0)
-        left_linear_val, right_linear_val = msg.position.y, msg.position.x  
 
+        left_linear_val, right_linear_val = msg.position.y * deg_to_rad * rad_to_count, msg.position.x * deg_to_rad * rad_to_count
         rospy.logwarn(str(left_linear_val) + ", " + str(right_linear_val))
 
         try:

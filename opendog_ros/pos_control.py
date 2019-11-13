@@ -4,7 +4,7 @@
 import rospy
 import sys
 import roslib
-roslib.load_manifest('opendog_ros')
+roslib.load_manifest('odrive_ros')
 
 #load all the message types you need to publish or subscribe to
 from std_msgs.msg import String
