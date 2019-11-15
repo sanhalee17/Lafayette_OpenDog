@@ -1,5 +1,5 @@
 # Lafayette_OpenDog
-   The repository contains 
+   The repository contains:
       1. OpenDog ROS launch file
       2. OpenDog Ros Python nodes for 2D forward walking
       3. Arduino ROS limit switch node
