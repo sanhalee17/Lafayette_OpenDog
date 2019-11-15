@@ -11,7 +11,7 @@ ros::NodeHandle nh;
 std_msgs::Bool pushed_msg;
 ros::Publisher pub_button1("odrive1_low_tib", &pushed_msg); //old topic name: odrive1_lims
 ros::Publisher pub_button2("odrive1_high_tib", &pushed_msg);
-//ros::Publisher pub_button3("odrive1_low_fem", &pushed_msg);
+ros::Publisher pub_button3("odrive1_low_fem", &pushed_msg);
 //ros::Publisher pub_button4("odrive1_high_fem", &pushed_msg);
 
 //ros::Publisher pub_button("odrive2_low_tib", &pushed_msg);
@@ -121,14 +121,17 @@ bool  reading6_high_fem = false;
 
 long last_debounce_time=0;
 long debounce_delay = 50;
+
 bool published = true;
 bool published2 = true;
+bool published3 = true;
 
 void setup()
 {
   nh.initNode();
   nh.advertise(pub_button1);
   nh.advertise(pub_button2);
+  nh.advertise(pub_button3);
   
   //initialize an LED output pin 
   //and a input pin for our push button
@@ -169,8 +172,8 @@ void setup()
 //  
 //  //Enable the pullup resistor on the button
   digitalWrite(odrive1_low_tib, HIGH);
-//  digitalWrite(odrive1_high_tib, HIGH);
-//  digitalWrite(odrive1_low_fem, HIGH);
+  digitalWrite(odrive1_high_tib, HIGH);
+  digitalWrite(odrive1_low_fem, HIGH);
 //  digitalWrite(odrive1_high_fem, HIGH);
 //
 //  digitalWrite(odrive2_low_tib, HIGH);
@@ -257,6 +260,7 @@ void loop()
   reading6_high_tib = !digitalRead(odrive6_high_tib);
   reading6_low_fem = !digitalRead(odrive6_low_fem);
 //  reading6_high_fem = !digitalRead(odrive6_high_fem);
+
   if (last_reading1_low_tib!= reading1_low_tib){
       last_debounce_time = millis();
       published = false;
