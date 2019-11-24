@@ -1,8 +1,8 @@
 <!-- -*- mode: XML -*- -->
 <launch>
     <arg name="connect_on_startup"   default="true"/>
-    <arg name="calibrate_on_startup" default="true"/>
-    <arg name="engage_on_startup"    default="true"/> 
+    <!-- <arg name="calibrate_on_startup" default="true"/> -->
+    <!-- <arg name="engage_on_startup"    default="true"/>  -->
 
     <!--Edit by GGC on July 3 -->
     <arg name="control_mode"   default="position"/>
@@ -19,7 +19,7 @@
 
 
     <!-- odrive 1 -->
-    <node pkg="odrive_ros" type="odrive_node" name="odrive1" ns="odrive1" 
+<!--     <node pkg="odrive_ros" type="odrive_node" name="odrive1" ns="odrive1" 
             output="$(arg output)" respawn="$(arg respawn)">
         <param name="wheel_track" value="0.285"/>
         <param name="tyre_circumference" value="0.341"/>
@@ -28,17 +28,17 @@
         <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> 
         <param name="engage_on_startup"    value="$(arg engage_on_startup)"/> 
 
-        <!--Edit by GGC on July 3 -->
+  
         <param name="control_mode"    value="$(arg control_mode)"/>
         
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg1_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
         <param name="odrive_serial"      value="2077326F4D4B"/>
-    </node>
+    </node> -->
 
     <!-- odrive 2 -->
-    <node pkg="odrive_ros" type="odrive_node" name="odrive2" ns="odrive2" 
+    <!-- <node pkg="odrive_ros" type="odrive_node" name="odrive2" ns="odrive2" 
             output="$(arg output)" respawn="$(arg respawn)">
         <param name="wheel_track" value="0.285"/>
         <param name="tyre_circumference" value="0.341"/>
@@ -47,17 +47,17 @@
         <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> 
         <param name="engage_on_startup"    value="$(arg engage_on_startup)"/> 
 
-        <!--Edit by GGC on July 3 -->
+        
         <param name="control_mode"    value="$(arg control_mode)"/>
         
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg1_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
         <param name="odrive_serial"      value="3367315A3536"/>
-    </node>
+    </node> -->
 
     <!-- odrive 3 -->
-    <node pkg="odrive_ros" type="odrive_node" name="odrive3" ns="odrive3" 
+    <!-- <node pkg="odrive_ros" type="odrive_node" name="odrive3" ns="odrive3" 
             output="$(arg output)" respawn="$(arg respawn)">
         <param name="wheel_track" value="0.285"/>
         <param name="tyre_circumference" value="0.341"/>
@@ -66,17 +66,17 @@
         <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> 
         <param name="engage_on_startup"    value="$(arg engage_on_startup)"/> 
 
-        <!--Edit by GGC on July 3 -->
+        Edit by GGC on July 3 
         <param name="control_mode"    value="$(arg control_mode)"/>
         
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg1_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
         <param name="odrive_serial"      value="336F31503536"/>
-    </node>
+    </node> -->
 
     <!-- odrive 4 -->
-    <node pkg="odrive_ros" type="odrive_node" name="odrive4" ns="odrive4" 
+<!--     <node pkg="odrive_ros" type="odrive_node" name="odrive4" ns="odrive4" 
             output="$(arg output)" respawn="$(arg respawn)">
         <param name="wheel_track" value="0.285"/>
         <param name="tyre_circumference" value="0.341"/>
@@ -85,7 +85,7 @@
         <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> 
         <param name="engage_on_startup"    value="$(arg engage_on_startup)"/> 
 
-        <!--Edit by GGC on July 3 -->
+        Edit by GGC on July 3 
         <param name="control_mode"    value="$(arg control_mode)"/>
         
         <param name="publish_odom"    value="$(arg publish_odom)"/>
@@ -93,7 +93,7 @@
         <param name="publish_tf"      value="$(arg publish_tf)"/>
         <param name="odrive_serial"      value="334931583536"/>
     </node>
-
+ -->
     <!-- odrive 5 -->
     <node pkg="odrive_ros" type="odrive_node" name="odrive5" ns="odrive5" 
             output="$(arg output)" respawn="$(arg respawn)">
@@ -101,8 +101,8 @@
         <param name="tyre_circumference" value="0.341"/>
         
         <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
-        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> 
-        <param name="engage_on_startup"    value="$(arg engage_on_startup)"/> 
+        <!-- <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/>  -->
+        <!-- <param name="engage_on_startup"    value="$(arg engage_on_startup)"/>  -->
 
         <!--Edit by GGC on July 3 -->
         <param name="control_mode"    value="$(arg control_mode)"/>
@@ -120,8 +120,8 @@
         <param name="tyre_circumference" value="0.341"/>
         
         <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
-        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> 
-        <param name="engage_on_startup"    value="$(arg engage_on_startup)"/> 
+        <!-- <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/>  -->
+        <!-- <param name="engage_on_startup"    value="$(arg engage_on_startup)"/>  -->
 
         <!--Edit by GGC on July 3 -->
         <param name="control_mode"    value="$(arg control_mode)"/>
@@ -130,6 +130,9 @@
         <param name = "odom_topic" value = "leg1_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
         <param name="odrive_serial"      value="3363314C3536"/>
+
+        <param name = "lim1low_topic" value = "lim6low_topic"/>
+        <param name = "lim1high_topic" value = "lim6high_topic"/>
         <!-- <param name="odrive_port" -->
     </node>
     <!-- Edit by SL on Nov. 13 -->
@@ -140,12 +143,12 @@
     <node pkg="rqt_ez_publisher" type="rqt_ez_publisher" name="rqt_ez_publisher" output="screen"/>
 
     <!-- Edit by SL on Nov.24 -->
-    <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics"/>
+    <!-- <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics"/>
 
     <node pkg="odrive_ros" type="motor_position.py" name="motor_position"/>
 
     <node pkg="odrive_ros" type="pub_foot_path.py" name="pub_foot_path"/>
-
+ -->
     <node pkg="rosserial_python" type="serial_node.py" name="limit_switch_arduino" args="/dev/ttyACM0"/>
 
 </launch>
