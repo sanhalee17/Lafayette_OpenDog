@@ -111,6 +111,11 @@
         <param name = "odom_topic" value = "leg1_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
         <param name="odrive_serial"      value="3365314F3536"/>
+
+        <param name = "lim1low_topic" value = "odrive5_low_tib"/>
+        <param name = "lim1high_topic" value = "odirve5_high_tib"/>
+        <param name = "lim2low_topic"  value = "odrive5_low_fem"/>
+        <param name = "lim2high_topic" value = "odrive5_high_fem"/>
     </node>
 
     <!-- odrive 6 -->
@@ -131,8 +136,11 @@
         <param name="publish_tf"      value="$(arg publish_tf)"/>
         <param name="odrive_serial"      value="3363314C3536"/>
 
-        <param name = "lim1low_topic" value = "lim6low_topic"/>
-        <param name = "lim1high_topic" value = "lim6high_topic"/>
+        <param name = "lim1low_topic" value = "odrive6_low_tib"/>
+        <param name = "lim1high_topic" value = "odirve6_high_tib"/>
+        <param name = "lim2low_topic"  value = "odrive6_low_fem"/>
+        <param name = "lim2high_topic" value = "odrive6_high_fem"/>
+
         <!-- <param name="odrive_port" -->
     </node>
     <!-- Edit by SL on Nov. 13 -->
