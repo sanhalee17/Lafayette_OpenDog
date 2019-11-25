@@ -15,3 +15,5 @@
    The launch file (odrive_wlims.launch) has been modified. 6 odrive nodes are added with specified hex serial numbers, and 
    2d motion ROS nodes are added (IK, foot path, motor position).
    Limit switch topic variable is added in the launch file.
+   # Nov. 25.2019
+   Launch file is updated. It conects 6 odrives successfully
