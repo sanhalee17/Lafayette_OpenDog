@@ -35,6 +35,11 @@
         <param name = "odom_topic" value = "leg1_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
         <param name="odrive_serial"      value="2077326F4D4B"/>
+
+        <param name = "lim1low_topic" value = "odrive1_low_tib"/>
+        <param name = "lim1high_topic" value = "odirve1_high_tib"/>
+        <param name = "lim2low_topic"  value = "odrive1_low_fem"/>
+        <param name = "lim2high_topic" value = "odrive1_high_fem"/>
     </node> -->
 
     <!-- odrive 2 -->
@@ -54,6 +59,11 @@
         <param name = "odom_topic" value = "leg1_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
         <param name="odrive_serial"      value="3367315A3536"/>
+
+        <param name = "lim1low_topic" value = "odrive2_low_tib"/>
+        <param name = "lim1high_topic" value = "odrive2_igh_tib"/>
+        <param name = "lim2low_topic"  value = "odrive2_low_fem"/>
+        <param name = "lim2high_topic" value = "odrive2_high_fem"/>
     </node> -->
 
     <!-- odrive 3 -->
@@ -73,6 +83,11 @@
         <param name = "odom_topic" value = "leg1_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
         <param name="odrive_serial"      value="336F31503536"/>
+
+        <param name = "lim1low_topic" value = "odrive3_low_tib"/>
+        <param name = "lim1high_topic" value = "odirve3_high_tib"/>
+        <param name = "lim2low_topic"  value = "odrive3_low_fem"/>
+        <param name = "lim2high_topic" value = "odrive3_high_fem"/>
     </node> -->
 
     <!-- odrive 4 -->
@@ -92,6 +107,11 @@
         <param name = "odom_topic" value = "leg1_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
         <param name="odrive_serial"      value="334931583536"/>
+
+        <param name = "lim1low_topic" value = "odrive4_low_tib"/>
+        <param name = "lim1high_topic" value = "odirve4_high_tib"/>
+        <param name = "lim2low_topic"  value = "odrive4_low_fem"/>
+        <param name = "lim2high_topic" value = "odrive4_high_fem"/>
     </node>
  -->
     <!-- odrive 5 -->
