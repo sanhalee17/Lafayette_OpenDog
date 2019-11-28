@@ -31,12 +31,16 @@ class MotorPosition:
 	def __init__(self):
 		#if you need parameters, use the following
 		#self.mything = rospy.get_param('param_name',default_value)
+		self.theta_f = rospy.get_param('~femur_angle', "/theta_f_1")
+		self.theta_t = rospy.get_param('~tibia_angle', "/theta_t_1")
+		self.position_command = rospy.get_param('~position_command', "/cmd_pos1")
+
 
 		#subscribe to theta_f and theta_t from inverse_kinematics
 		# self.sub_F = rospy.Subscriber("/theta_f", Float64Stamped, femur_motor_callback)
 		# self.sub_T = rospy.Subscriber("/theta_t", Float64Stamped, tibia_motor_callback)
-		self.sub_F = rospy.Subscriber("/theta_f", Float64, self.femur_motor_callback)
-		self.sub_T = rospy.Subscriber("/theta_t", Float64, self.tibia_motor_callback)
+		self.sub_F = rospy.Subscriber(self.theta_f, Float64, self.femur_motor_callback)
+		self.sub_T = rospy.Subscriber(self.theta_t, Float64, self.tibia_motor_callback)
 
 		# actual position (counts) from /encoder_right topic (encoder position) published by odrive_node.py
 		# self.sub_init_t = rospy.Subscriber("odrive/raw_odom/encoder_right", Int32, self.init_t_callback)
@@ -47,7 +51,7 @@ class MotorPosition:
 		# How do I get both in one publisher to output a Pose msg?
 		# Do I set up a timer?
 		# self.pub = rospy.Publisher("/cmd_pos", PoseStamped, queue_size = 1)
-		self.pub = rospy.Publisher("/cmd_pos", Pose, queue_size = 1)
+		self.pub = rospy.Publisher(self.position_command, Pose, queue_size = 1)
 
 
 		# Set up a timed loop
