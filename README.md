@@ -17,3 +17,5 @@
    Limit switch topic variable is added in the launch file.
    # Nov. 25.2019
    Launch file is updated. It conects 6 odrives successfully
+   # Nov.28.2019
+   Changed opendog node organization for forward walking motion. The individual leg will have individual foot path. Still need to figure out phase shift.
