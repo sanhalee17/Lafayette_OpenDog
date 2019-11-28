@@ -40,6 +40,8 @@
         <param name = "lim1high_topic" value = "odrive/odirve1_high_tib"/>
         <param name = "lim2low_topic"  value = "odrive/odrive1_low_fem"/>
         <param name = "lim2high_topic" value = "odrive/odrive1_high_fem"/>
+
+        <param name = "pos_cmd_topic" value = "/cmd_pos1"/>
     </node>
  -->
     <!-- odrive 2 -->
@@ -64,6 +66,8 @@
         <param name = "lim1high_topic" value = "odrive/odrive2_igh_tib"/>
         <param name = "lim2low_topic"  value = "odrive/odrive2_low_fem"/>
         <param name = "lim2high_topic" value = "odrive/odrive2_high_fem"/>
+
+        <param name = "pos_cmd_topic" value = "/cmd_pos2"/>
     </node>
 
     <!-- odrive 3 -->
@@ -88,6 +92,8 @@
         <param name = "lim1high_topic" value = "odrive/odirve3_high_tib"/>
         <param name = "lim2low_topic"  value = "odrive/odrive3_low_fem"/>
         <param name = "lim2high_topic" value = "odrive/odrive3_high_fem"/>
+
+        <param name = "pos_cmd_topic" value = "/cmd_pos3"/>
     </node>
 
     <!-- odrive 4 -->
@@ -112,20 +118,22 @@
         <param name = "lim1high_topic" value = "odrive/odirve4_high_tib"/>
         <param name = "lim2low_topic"  value = "odrive/odrive4_low_fem"/>
         <param name = "lim2high_topic" value = "odrive/odrive/odrive4_high_fem"/>
+
+        <param name = "pos_cmd_topic" value = "/cmd_pos4"/>
     </node>
 
     <!-- odrive 5 -->
-    <node pkg="odrive_ros" type="odrive_node" name="odrive5" ns="odrive5" 
+    <!-- <node pkg="odrive_ros" type="odrive_node" name="odrive5" ns="odrive5" 
             output="$(arg output)" respawn="$(arg respawn)">
         <param name="wheel_track" value="0.285"/>
         <param name="tyre_circumference" value="0.341"/>
         
         <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
-        <!-- <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/>  -->
+ -->        <!-- <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/>  -->
         <!-- <param name="engage_on_startup"    value="$(arg engage_on_startup)"/>  -->
 
         <!--Edit by GGC on July 3 -->
-        <param name="control_mode"    value="$(arg control_mode)"/>
+        <!-- <param name="control_mode"    value="$(arg control_mode)"/>
         
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg5_odom"/>
@@ -136,20 +144,22 @@
         <param name = "lim1high_topic" value = "odrive/odirve5_high_tib"/>
         <param name = "lim2low_topic"  value = "odrive/odrive5_low_fem"/>
         <param name = "lim2high_topic" value = "odrive/odrive5_high_fem"/>
-    </node> 
+
+        <param name = "pos_cmd_topic" value = "/cmd_pos5"/>
+    </node>  -->
 
     <!-- odrive 6 -->
-    <node pkg="odrive_ros" type="odrive_node" name="odrive6" ns="odrive6" 
+   <!--  <node pkg="odrive_ros" type="odrive_node" name="odrive6" ns="odrive6" 
             output="$(arg output)" respawn="$(arg respawn)">
         <param name="wheel_track" value="0.285"/>
         <param name="tyre_circumference" value="0.341"/>
         
-        <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
+        <param name="connect_on_startup"   value="$(arg connect_on_startup)"/> -->
         <!-- <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/>  -->
         <!-- <param name="engage_on_startup"    value="$(arg engage_on_startup)"/>  -->
 
-        <!--Edit by GGC on July 3 -->
-        <param name="control_mode"    value="$(arg control_mode)"/>
+        
+        <!-- <param name="control_mode"    value="$(arg control_mode)"/>
         
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg6_odom"/>
@@ -161,22 +171,92 @@
         <param name = "lim2low_topic"  value = "odrive/odrive6_low_fem"/>
         <param name = "lim2high_topic" value = "odrive/odrive6_high_fem"/>
 
-        <!-- <param name="odrive_port" -->
-    </node>
+        <param name = "pos_cmd_topic" value = "/cmd_pos6"/>
+
+     
+    </node> -->
+
     <!-- Edit by SL on Nov. 13 -->
  <!--    <node pkg="odrive_ros" type="odrive_interface" name="odrive" ns="odrive"
         output="$(arg output)" respawn="$(arg respawn)"  -->
     
-    <!--Edit by GGC on July 3 -->
+    <!-- Edit by SL on Nov.26 -->
     <node pkg="rqt_ez_publisher" type="rqt_ez_publisher" name="rqt_ez_publisher" output="screen"/>
 
     <!-- Edit by SL on Nov.24 -->
-    <!-- <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics"/>
+    <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics_1">
+        <param name = "femur_angle" value = "/theta_f_1"/>
+        <param name = "tibia_angle" value = "/theta_t_1"/>
+        <param name = "foot_position" value = "/footPosition_1"/>
+    </node>
 
-    <node pkg="odrive_ros" type="motor_position.py" name="motor_position"/>
+    <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics_2">
+        <param name = "femur_angle" value = "/theta_f_2"/>
+        <param name = "tibia_angle" value = "/theta_t_2"/>
+        <param name = "foot_position" value = "/footPosition_2"/>
+    </node>
 
-    <node pkg="odrive_ros" type="pub_foot_path.py" name="pub_foot_path"/>
- -->
+    <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics_3">
+        <param name = "femur_angle" value = "/theta_f_3"/>
+        <param name = "tibia_angle" value = "/theta_t_3"/>
+        <param name = "foot_position" value = "/footPosition_3"/>
+    </node>
+
+    <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics_4">
+        <param name = "femur_angle" value = "/theta_f_4"/>
+        <param name = "tibia_angle" value = "/theta_t_4"/>
+        <param name = "foot_position" value = "/footPosition_4"/>
+    </node>
+
+    <node pkg="odrive_ros" type="motor_position.py" name="motor_position_1">
+        <param name = "femur_angle" value = "/theta_f_1"/>
+        <param name = "tibia_angle" value = "/theta_t_1"/>
+        <param name = "position_command" value = "/cmd_pos1"/>
+    </node>
+
+    <node pkg="odrive_ros" type="motor_position.py" name="motor_position_2">
+        <param name = "femur_angle" value = "/theta_f_2"/>
+        <param name = "tibia_angle" value = "/theta_t_2"/>
+        <param name = "position_command" value = "/cmd_pos2"/>
+    </node>
+
+    <node pkg="odrive_ros" type="motor_position.py" name="motor_position_3">
+        <param name = "femur_angle" value = "/theta_f_3"/>
+        <param name = "tibia_angle" value = "/theta_t_3"/>
+        <param name = "position_command" value = "/cmd_pos3"/>
+    </node>
+
+    <node pkg="odrive_ros" type="motor_position.py" name="motor_position_4">
+        <param name = "femur_angle" value = "/theta_f_4"/>
+        <param name = "tibia_angle" value = "/theta_t_4"/>
+        <param name = "position_command" value = "/cmd_pos4"/>
+    </node>
+
+    <node pkg ="odrive_ros" type="pub_foot_path.py" name="pub_foot_path_1">
+        <param name = "foot_position" value = "/footPosition_1"/>
+    </node>
+
+    <node pkg ="odrive_ros" type="pub_foot_path.py" name="pub_foot_path_2">
+        <param name = "foot_position" value = "/footPosition_2"/>
+    </node>
+
+    <node pkg ="odrive_ros" type="pub_foot_path.py" name="pub_foot_path_3">
+        <param name = "foot_position" value = "/footPosition_3"/>
+    </node>
+
+    <node pkg ="odrive_ros" type="pub_foot_path.py" name="pub_foot_path_4">
+        <param name = "foot_position" value = "/footPosition_4"/>
+    </node>
+
+
+
+    <!-- <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics_2"/>
+        <param name = "femur_angle" value = "/theta_f_2"/>
+        <param name = "tibia_angle" value = "/theta_t_2"/>
+    </node> -->
+
+    
+
     <!-- <node pkg="rosserial_python" type="serial_node.py" name="limit_switch_arduino" args="/dev/ttyACM0"/> -->
 
 </launch>
