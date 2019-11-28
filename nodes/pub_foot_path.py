@@ -16,6 +16,9 @@ from geometry_msgs.msg import PoseStamped
 
 class FootPath:
 	def __init__(self):
+
+		self.foot_position = rospy.get_param('~foot_position', "/footPosition_1")
+
 		#create the sparse path. 
 		self.S = array([0,3,9,12,18])
 		# self.X = array([2,2,8,8,2])
@@ -32,7 +35,7 @@ class FootPath:
 		self.Laps = 0
 
 		# Set up a publisher
-		self.pub = rospy.Publisher("/footPosition", PoseStamped, queue_size = 1)
+		self.pub = rospy.Publisher(self.foot_position, PoseStamped, queue_size = 1)
 
 		# Set up a timed loop
 		rospy.Timer(rospy.Duration(0.02), self.timer_callback, oneshot=False)

@@ -100,10 +100,10 @@ class ODriveNode(object):
         self.pos_cmd_topic_name = rospy.get_param('~pos_cmd_topic',"/cmd_pos") 
         
         self.mode            = rospy.get_param('~control_mode', "position")
-        self.lim1low_topic   = rospy.get_param('~lim1low_topic', "odrive1_low_tib")
-        self.lim1high_topic   = rospy.get_param('~lim1high_topic', "odrive1_high_tib")
-        self.lim2low_topic   = rospy.get_param('~lim2low_topic', "odrive1_low_fem")
-        self.lim2high_topic   = rospy.get_param('~lim2high_topic', "odrive1_high_fem")
+        self.lim1low_topic   = rospy.get_param('~lim1low_topic', "odrive/odrive1_low_tib")
+        self.lim1high_topic   = rospy.get_param('~lim1high_topic', "odrive/odrive1_high_tib")
+        self.lim2low_topic   = rospy.get_param('~lim2low_topic', "odrive/odrive1_low_fem")
+        self.lim2high_topic   = rospy.get_param('~lim2high_topic', "odrive/odrive1_high_fem")
         self.serial_number   = rospy.get_param('~odrive_serial', "3365314F3536")
         # self.port_nunber = rospy.get_param('~odrive_port', "/dev/ttyACM0")
 

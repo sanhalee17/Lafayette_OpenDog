@@ -32,17 +32,21 @@ class InverseKinematics:
 		#if you need parameters, use the following
 		#self.mything = rospy.get_param('param_name',default_value)
 
+		self.theta_f = rospy.get_param('~femur_angle', "/theta_f")
+		self.theta_t = rospy.get_param('~tibia_angle', "/theta_t")
+		self.foot_position = rospy.get_param('~foot_position', "/footPosition_1")
+
 		# Publishers and Subscribers
 		# Subscribe to a foot position P: (xP, yP)
 		# self.sub = rospy.Subscriber("/footPosition",Pose, self.pos_callback)
-		self.sub = rospy.Subscriber("/footPosition",PoseStamped, self.pos_callback)
+		self.sub = rospy.Subscriber(self.foot_position,PoseStamped, self.pos_callback)
 
 		#publish leg angles (two separate publishers)
 		#do I need to publish on a timer or only when I get a new value???
 		# self.femur = rospy.Publisher("/theta_f", Float64Stamped, queue_size = 1)
 		# self.tibia = rospy.Publisher("/theta_t",Float64Stamped, queue_size = 1)
-		self.femur = rospy.Publisher("/theta_f", Float64, queue_size = 1)
-		self.tibia = rospy.Publisher("/theta_t",Float64, queue_size = 1)
+		self.femur = rospy.Publisher(self.theta_f, Float64, queue_size = 1)
+		self.tibia = rospy.Publisher(self.theta_t, Float64, queue_size = 1)
 
 
 		# Class Variables
