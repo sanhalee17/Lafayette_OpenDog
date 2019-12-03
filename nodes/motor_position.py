@@ -17,7 +17,7 @@ import tf_conversions
 import tf2_ros
 
 # Imports message types and services from several libraries
-from std_msgs.msg import  Float64, Int32   #,Float64Stamped, Int32Stamped,
+from std_msgs.msg import  Float64, Int32, Bool   #,Float64Stamped, Int32Stamped,
 from geometry_msgs.msg import TwistStamped, TransformStamped, Pose #PoseStamped
 import std_srvs.srv
 
@@ -25,6 +25,7 @@ import time
 from numpy import *
 import traceback
 import Queue   # might not be needed
+
 
 
 class MotorPosition:
@@ -35,6 +36,12 @@ class MotorPosition:
 		self.theta_t = rospy.get_param('~tibia_angle', "/theta_t_1")
 		self.position_command = rospy.get_param('~position_command', "/cmd_pos1")
 
+
+		self.lim1low_topic   = rospy.get_param('~lim1low_topic', "odrive/odrive1_low_tib")
+		self.lim2high_topic   = rospy.get_param('~lim2high_topic', "odrive/odrive1_high_fem")
+
+		self.lim1low_sub = rospy.Subscriber(self.lim1low_topic ,Bool,self.lim1lowcallback)
+		self.lim2high_sub = rospy.Subscriber(self.lim2high_topic ,Bool,self.lim2highcallback)
 
 		#subscribe to theta_f and theta_t from inverse_kinematics
 		# self.sub_F = rospy.Subscriber("/theta_f", Float64Stamped, femur_motor_callback)
@@ -121,6 +128,26 @@ class MotorPosition:
 		self.distance_to_motor_pos = (2.2114 / (self.mm_to_in * 5)) * (8192)   # 5 mm = 2.2114 rev = 2.2114 * 8192 counts
 		self.rev_to_count = 8192
 		self.deg_to_count = 8192 / 360   # 1 revolution = 360 degrees = 8192 counts
+
+		self.lim1low = False
+    
+		self.lim2high = False
+
+	def lim1lowcallback(self,data):
+	       
+		self.lim1low = data.data
+		if self.lim1low and not self.lim1low_old:
+			self.left_current_accumulator = left_current_accumulator-194088
+			rospy.logwarn(data)
+		self.lim1low_old = self.lim1low
+
+	def lim2highcallback(self,data):
+	
+		self.lim2high = data.data
+		if self.lim2high and not self.lim2high_old:
+			self.left_current_accumulator = left_current_accumulator-194088
+			rospy.logwarn(data)
+		self.lim2high_old = self.lim2high
 
 	# def init_f_callback(self, data):
 	# 	if(self.init_motor_f is None):

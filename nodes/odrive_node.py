@@ -18,7 +18,6 @@ import time
 import math
 import traceback
 import Queue
-
 # Edit by GGC on June 14: 
 # From odrive_interface.py, imports 2 classes
 # Note: ODriveFailure only contains "pass"
