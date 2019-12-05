@@ -9,7 +9,7 @@
 import rospy
 import sys
 import roslib
-roslib.load_manifest('odrive_ros')
+roslib.load_manifest('opendog_ros')
 
 
 import tf.transformations
@@ -17,7 +17,7 @@ import tf_conversions
 import tf2_ros
 
 # Imports message types and services from several libraries
-from std_msgs.msg import  Float64, Int32, Bool   #,Float64Stamped, Int32Stamped,
+from std_msgs.msg import  Float64, Int32   #,Float64Stamped, Int32Stamped,
 from geometry_msgs.msg import TwistStamped, TransformStamped, Pose #PoseStamped
 import std_srvs.srv
 
@@ -26,97 +26,17 @@ from numpy import *
 import traceback
 import Queue   # might not be needed
 
-# ##timer code
-import time
-
-# # Block 1
-# run_once = 0
-# while 1:
-# 		if run_once ==0:
-# 			timing_time0 = True
-# 			wait_time0 = False
-# 			T0_EN = timing_time0
-# 			T0 = False
-# 			Start_time0 = 0
-# 			run_once = 1
-
-
-# # --------------------TIMER_0--------------------
-# B_time0 = wait_time0 and T0
-# C_time0 = timing_time0 and T0
-# D_time0 = timing_time0 and not T0
-
-# wait_time0 = B_time0 or C_time0
-# timing_time0 = D_time0
-
-# if (wait_time0):
-# 	Start_time0 = time.time()
-
-# if(timing_time0):
-# 	delta_t0 = time.time() - Start_time0
-
-# else:
-# 	delta_t0 = 0
-
-# T0 = delta_t0 > 5
-# #-----------------------------------------------
-
-# # # Block 2
-
-# # A = Timing and not T0_EN
-# # B = Wait and T0
-# # C = Timing and not T1
-# # D = Timing and T1
-
-# # # Block 3
-
-# # Wait = A or N
-# # Forward = B or C
-# # Back = D or E
-# # TLeft = F or G
-# # TRight = H or I
-# # SRight = J or K
-# # SLeft = L or M
-
-# # # Block 4
-
-# ##timer code end
-
-
 
 class MotorPosition:
-
 	def __init__(self):
 		#if you need parameters, use the following
 		#self.mything = rospy.get_param('param_name',default_value)
-		self.theta_f = rospy.get_param('~femur_angle', "/theta_f")
-		self.theta_t = rospy.get_param('~tibia_angle', "/theta_t")
-		self.position_command = rospy.get_param('~position_command', "/cmd_pos")
-		self.cal_t = rospy.get_param('~cal_t',"motor_pos1")
-		self.cal_f = rospy.get_param('~cal_f',"motor_pos2")
-
-
-		self.lim1low_topic   = rospy.get_param('~lim1low_topic', "odrive/odrive1_low_tib")
-		self.lim2high_topic   = rospy.get_param('~lim2high_topic', "odrive/odrive1_high_fem")
-
-		# self.lim1low_sub = rospy.Subscriber(self.lim1low_topic ,Bool,self.lim1lowcallback)
-		# self.lim2high_sub = rospy.Subscriber(self.lim2high_topic ,Bool,self.lim2highcallback)
-
 
 		#subscribe to theta_f and theta_t from inverse_kinematics
 		# self.sub_F = rospy.Subscriber("/theta_f", Float64Stamped, femur_motor_callback)
 		# self.sub_T = rospy.Subscriber("/theta_t", Float64Stamped, tibia_motor_callback)
-		self.sub_F = rospy.Subscriber(self.theta_f, Float64, self.femur_motor_callback)
-		self.sub_T = rospy.Subscriber(self.theta_t, Float64, self.tibia_motor_callback)
-		self.sub_cal_T = rospy.Subscriber(self.cal_t, Pose, self.tibia_calibration_callback)
-		self.sub_cal_F = rospy.Subscriber(self.cal_f, Pose, self.femur_calibration_callback)
-		self.lim1low = False
-		self.lim1high = False
-		self.lim2low = False
-		self.lim2high = False
-		self.init_motor_f = None
-		self.init_motor_t = None
-
+		self.sub_F = rospy.Subscriber("/theta_f", Float64, self.femur_motor_callback)
+		self.sub_T = rospy.Subscriber("/theta_t", Float64, self.tibia_motor_callback)
 
 		# actual position (counts) from /encoder_right topic (encoder position) published by odrive_node.py
 		# self.sub_init_t = rospy.Subscriber("odrive/raw_odom/encoder_right", Int32, self.init_t_callback)
@@ -127,9 +47,7 @@ class MotorPosition:
 		# How do I get both in one publisher to output a Pose msg?
 		# Do I set up a timer?
 		# self.pub = rospy.Publisher("/cmd_pos", PoseStamped, queue_size = 1)
-		self.pub = rospy.Publisher(self.position_command, Pose, queue_size = 1)
-		self.pup_cal_t = rospy.Publisher(self.cal_t, Pose, queue_size = 2)
-		self.pup_cal_f = rospy.Publisher(self.cal_f, Pose, queue_size = 2)
+		self.pub = rospy.Publisher("/cmd_pos", Pose, queue_size = 1)
 
 
 		# Set up a timed loop
@@ -186,14 +104,12 @@ class MotorPosition:
 		# self.last_BN_t = 0
 		# self.delta_BN_t = None
 
-		self.des_pos_f = 0	# desired femur motor position (in encoder counts)
+		self.des_pos_f = None	# desired femur motor position (in encoder counts)
 		# self.last_pos_f = 0
 		self.delta_motor_f = None
-		self.des_pos_t = 0	# desired tibia motor position (in encoder counts)
+		self.des_pos_t = None	# desired tibia motor position (in encoder counts)
 		# self.last_pos_t = 0
 		self.delta_motor_t = None
-		self.calibrated_t = False
-		self.calibrated_f = False
 
 
 		# Conversion
@@ -201,24 +117,6 @@ class MotorPosition:
 		self.distance_to_motor_pos = (2.2114 / (self.mm_to_in * 5)) * (8192)   # 5 mm = 2.2114 rev = 2.2114 * 8192 counts
 		self.rev_to_count = 8192
 		self.deg_to_count = 8192 / 360   # 1 revolution = 360 degrees = 8192 counts
-
-		self.lim1low = False
-    
-		self.lim2high = False
-
-	def lim1lowcallback(self,data):
-
-		self.lim1low = data.data
-		if self.lim1low and not self.lim1low_old:
-			rospy.logwarn(data)
-		self.lim1low_old = self.lim1low
-
-	def lim2highcallback(self,data):
-	
-		self.lim2high = data.data
-		if self.lim2high and not self.lim2high_old:
-			rospy.logwarn(data)
-		self.lim2high_old = self.lim2high
 
 	# def init_f_callback(self, data):
 	# 	if(self.init_motor_f is None):
@@ -234,46 +132,8 @@ class MotorPosition:
 	# 		self.last_pos_t = self.init_motor_t
 	# 	else:
 	# 		pass
-	def tibia_calibration_callback(self):
-		rospy.logwarn('self.calibrated:')
-		if (self.calibrated_t is False):
-			if self.lim1high and not self.lim1high_old:
-				self.des_BN_t = 3.25
-				self.delta_motor_t = self.des_BN_t * self.distance_to_motor_pos
-				self.des_pos_t = self.delta_motor_t
-				self.lim1high_old = self.lim1high
 
-			motor_pos1 = Pose()
-			motor_pos1.position.x = self.des_pos_t
-			motor_pos1.position.y = 0   # Order depends on ODrive set-up
-			motor_pos1.position.z = 0.0
-			motor_pos1.orientation.x = 0.0
-			motor_pos1.orientation.y = 0.0
-			motor_pos1.orientation.z = 0.0
-			motor_pos1.orientation.w = 0.0
-			self.pub.publish(motor_pos1)
-			print("Motor Positions: " + str(motor_pos))
-			self.calibrated_t = True
 
-	def femur_calibration_callback(self):
-		if (self.calibrated_f is False):
-			if self.lim2low and not self.lim2low_old:
-				self.des_BN_f = 3.75
-				self.delta_motor_f = self.des_BN_f * self.distance_to_motor_pos
-				self.des_pos_f = self.delta_motor_f
-				self.lim2low_old = self.lim2low
-
-			motor_pos2 = Pose()
-			motor_pos2.position.x = 0
-			motor_pos2.position.y = self.des_pos_f   # Order depends on ODrive set-up
-			motor_pos2.position.z = 0.0
-			motor_pos2.orientation.x = 0.0
-			motor_pos2.orientation.y = 0.0
-			motor_pos2.orientation.z = 0.0
-			motor_pos2.orientation.w = 0.0
-			self.pub.publish(motor_pos2)
-			print("Motor Positions: " + str(motor_pos))
-			self.calibrated_f = True
 
 	def femur_motor_callback(self, data):
 		# Femur angle is calculated from Inverse Kinematics code, zero is when the hip is tucked 
@@ -281,7 +141,7 @@ class MotorPosition:
 		print(self.theta_f)
 
 		# Calculations will not continue if no init_motor_f does not have a value 
-		if(self.init_motor_t is not None or self.calibrated_f is True):
+		if(self.init_motor_f is not None):
 			# Calculations will not continue if theta_f does not have a value
 			if(self.theta_f is not None):
 				print("Received theta_f!")
@@ -348,21 +208,16 @@ class MotorPosition:
 				self.delta_motor_f = - self.des_BN_f * self.distance_to_motor_pos
 
 				self.des_pos_f = self.delta_motor_f #+ self.last_pos_f
-				
-
 			else:
 				pass
-		elif(self.init_motor_f is not None and self.calibrated_f is False):
-				self.des_pos_f=self.des_pos_f-10
-
 		else:
 			pass
 
 	def tibia_motor_callback(self, data):
 		# Calculations will not continue if no init_motor_f does not have a value 
-		if(self.init_motor_t is not None or self.calibrated_t is True):
+		if(self.init_motor_t is not None):
 			# Calculations will not continue if theta_f does not have a value
-			if(self.theta_t is not None):
+			if(self.theta_f is not None):
 				print("Received theta_f and theta_t!")
 				self.theta_t = data.data
 				print("theta_t = " + str(self.theta_t))
@@ -380,6 +235,7 @@ class MotorPosition:
 				# Calculate the distance between the knee and the ball nut
 				self.length_KBN = (self.link_K * sin(self.theta_KLN)) / sin(self.theta_t)
 				print("length_KBN = " + str(self.length_KBN))
+				
 
 				# Check: Make sure the ball nut will not crash into either ball screw mount
 				if(self.length_KBN < self.min_K):
@@ -432,7 +288,7 @@ class MotorPosition:
 				self.delta_motor_t = self.des_BN_t * self.distance_to_motor_pos
 				# print("delta_motor_t = " + str(self.delta_motor_t))
 				self.des_pos_t = self.delta_motor_t #+ self.last_pos_t
-		
+
 				# Publishes the motor positions as a Pose message
 				# motor_pos = PoseStamped()
 				# motor_pos.header.stamp = rospy.Time.now()
@@ -453,11 +309,8 @@ class MotorPosition:
 				# self.last_pos_t = self.des_pos_t
 			else:
 				pass
-		elif(self.init_motor_t is not None and self.calibrated_t is False):
-			self.des_pos_t=self.des_pos_t-10
 		else:
 			pass
-
 
 
 	# function that takes these two distances and converts them into motor positions

@@ -105,7 +105,7 @@ class ODriveNode(object):
         self.lim1high_topic   = rospy.get_param('~lim1high_topic', "odrive/odrive1_high_tib")
         self.lim2low_topic   = rospy.get_param('~lim2low_topic', "odrive/odrive1_low_fem")
         self.lim2high_topic   = rospy.get_param('~lim2high_topic', "odrive/odrive1_high_fem")
-        self.serial_number   = rospy.get_param('~odrive_serial', "3365314F3536")
+        self.serial_number   = rospy.get_param('~odrive_serial', "3363314C3536")
         # self.port_nunber = rospy.get_param('~odrive_port', "/dev/ttyACM0")
 
         print(self.mode)
@@ -226,7 +226,6 @@ class ODriveNode(object):
         
         self.lim1low = data.data
         if self.lim1low and not self.lim1low_old:
-                self.left_current_accumulator = left_current_accumulator-194088
                 rospy.logwarn(data)
         self.lim1low_old = self.lim1low
 
@@ -250,7 +249,6 @@ class ODriveNode(object):
         
         self.lim2high = data.data
         if self.lim2high and not self.lim2high_old:
-                self.left_current_accumulator = left_current_accumulator-194088
                 rospy.logwarn(data)
         self.lim2high_old = self.lim2high
 

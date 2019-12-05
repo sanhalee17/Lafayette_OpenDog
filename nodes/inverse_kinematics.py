@@ -29,6 +29,27 @@ import Queue   # might not be needed
 
 class InverseKinematics:
 	def __init__(self):
+				# Class Variables
+		# Note: Origin is at hip joint
+		# For right leg: positive x is to the right, y is down, and positive angle is clockwise
+
+		# Measured Values:
+		# All lengths are in inches and angles are in degrees (and converted to radians)
+		self.length_f = 14.125   # distance from hip to knee pivots
+		self.length_t = 13.25    # distance from knee pivots to bottom of foot (P)
+		self.theta_K_shift = 13*(pi/180)   #16.6# offset angle, between hip-knee (HK) line and hip-femur ball nut (HN) line
+		self.theta_HKP_shift = -1*(pi/180)    #8-1.5#1# offset angle, between knee-foot (KP) line and knee-tibia link connection (KL) line
+		self.theta_H = 10.3*(pi/180)         #10.3 #15.4 # 16.9 # offset angle, between x-axis and hip constraint (HL)
+		self.theta_t_shift = 14*(pi/180)   #21.3-7.3 #15.8# offset angle, between knee-tibia ball nut (KN) line and knee-hip (KH) line
+
+		# Range of Motion
+		# self.R = 27.6236  # Farthest reach of foot (P) relative to hip, empirical
+		self.R = 27.375   	# Farthest reach of foot (P) relative to hip, sum of length_f and length_t
+		self.r = 17.9904    # Closest reach of foot (P) relative to hip, empirical
+		self.theta_min_E = 39.91*(pi/180)     # smallest angle from x-axis to hip-foot (HP) line when tibia is fully extended
+		self.theta_max_E = 124*(pi/180) #119.29   # largest angle from x-axis to HP when tibia is fully extended
+		self.theta_min_C = 4.0002*(pi/180)	  # smallest angle from x-axis to HP when tibia is fully contracted (folded)
+		self.theta_max_C = 71.1922*(pi/180)   # largest angle from x-axis to HP when tibia is fully contracted (folded)
 		#if you need parameters, use the following
 		#self.mything = rospy.get_param('param_name',default_value)
 
@@ -52,27 +73,7 @@ class InverseKinematics:
 
 
 
-		# Class Variables
-		# Note: Origin is at hip joint
-		# For right leg: positive x is to the right, y is down, and positive angle is clockwise
 
-		# Measured Values:
-		# All lengths are in inches and angles are in degrees (and converted to radians)
-		self.length_f = 14.125   # distance from hip to knee pivots
-		self.length_t = 13.25    # distance from knee pivots to bottom of foot (P)
-		self.theta_K_shift = 13*(pi/180)   #16.6# offset angle, between hip-knee (HK) line and hip-femur ball nut (HN) line
-		self.theta_HKP_shift = -1*(pi/180)    #8-1.5#1# offset angle, between knee-foot (KP) line and knee-tibia link connection (KL) line
-		self.theta_H = 10.3*(pi/180)         #10.3 #15.4 # 16.9 # offset angle, between x-axis and hip constraint (HL)
-		self.theta_t_shift = 14*(pi/180)   #21.3-7.3 #15.8# offset angle, between knee-tibia ball nut (KN) line and knee-hip (KH) line
-
-		# Range of Motion
-		# self.R = 27.6236  # Farthest reach of foot (P) relative to hip, empirical
-		self.R = 27.375   	# Farthest reach of foot (P) relative to hip, sum of length_f and length_t
-		self.r = 17.9904    # Closest reach of foot (P) relative to hip, empirical
-		self.theta_min_E = 39.91*(pi/180)     # smallest angle from x-axis to hip-foot (HP) line when tibia is fully extended
-		self.theta_max_E = 124*(pi/180) #119.29   # largest angle from x-axis to HP when tibia is fully extended
-		self.theta_min_C = 4.0002*(pi/180)	  # smallest angle from x-axis to HP when tibia is fully contracted (folded)
-		self.theta_max_C = 71.1922*(pi/180)   # largest angle from x-axis to HP when tibia is fully contracted (folded)
 
 		# To be calculated...
 		self.d = None          # distance from hip to base of foot (or P)
