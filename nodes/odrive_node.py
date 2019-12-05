@@ -17,7 +17,7 @@ import std_srvs.srv
 import time
 import math
 import traceback
-import Queue
+import Queue #data
 # Edit by GGC on June 14: 
 # From odrive_interface.py, imports 2 classes
 # Note: ODriveFailure only contains "pass"
@@ -97,6 +97,8 @@ class ODriveNode(object):
         self.base_frame      = rospy.get_param('~base_frame', "base_link")
         self.odom_calc_hz    = rospy.get_param('~odom_calc_hz', 100)  # Edit by GGC on June 20
         self.pos_cmd_topic_name = rospy.get_param('~pos_cmd_topic',"/cmd_pos") 
+        self.hip_cmd_topic1_name = rospy.get_param('~hip_cmd_topic1',"/hip_pos1") 
+        self.hip_cmd_topic2_name = rospy.get_param('~hip_cmd_topic2',"/hip_pos2") 
         
         self.mode            = rospy.get_param('~control_mode', "position")
         self.lim1low_topic   = rospy.get_param('~lim1low_topic', "odrive/odrive1_low_tib")
@@ -127,6 +129,8 @@ class ODriveNode(object):
         # Edit by GGC on July 4: Changing "is" to "==" allows the if-else block to work properly
         if self.mode == "position":
             self.pos_subscribe = rospy.Subscriber(self.pos_cmd_topic_name, Pose, self.cmd_pos_callback, queue_size=2)
+            self.hip1_subscribe = rospy.Subscriber(self.hip_cmd_topic1_name, Pose, self.hip_pos1_callback, queue_size=2)
+            self.hip2_subscribe = rospy.Subscriber(self.hip_cmd_topic2_name, Pose, self.hip_pos2_callback, queue_size=2)
             print("Subscribed to /cmd_pos")
         elif self.mode == "velocity":
             self.vel_subscribe = rospy.Subscriber("/cmd_vel", Twist, self.cmd_vel_callback, queue_size=2)
@@ -676,7 +680,47 @@ class ODriveNode(object):
             pass
 
         self.last_cmd_vel_time = rospy.Time.now()   # change to be last_cmd_pos_time????
+    def hip_pos1_callback(self, msg):
+        deg_to_rad = math.pi / 180
+        rad_to_count = 8192 / (2 * math.pi)
 
+        # Edit by GGC on July 15: If it is receiving degrees...
+        # left_linear_val, right_linear_val = msg.position.y * deg_to_rad * rad_to_count, msg.position.x * deg_to_rad * rad_to_count
+        
+        # If it is receiving counts...
+        # left = femur (axis 1), right = tibia (axis 0)
+        left_linear_val, right_linear_val = msg.position.y, msg.position.x  
+
+        rospy.logwarn(str(left_linear_val) + ", " + str(right_linear_val))
+
+        try:
+            drive_command = ('drive', (left_linear_val, right_linear_val))
+            self.command_queue.put_nowait(drive_command)
+        except Queue.Full:
+            pass
+
+        self.last_cmd_vel_time = rospy.Time.now()   # change to be last_cmd_pos_time????
+
+    def hip_pos2_callback(self, msg):
+        deg_to_rad = math.pi / 180
+        rad_to_count = 8192 / (2 * math.pi)
+
+        # Edit by GGC on July 15: If it is receiving degrees...
+        # left_linear_val, right_linear_val = msg.position.y * deg_to_rad * rad_to_count, msg.position.x * deg_to_rad * rad_to_count
+        
+        # If it is receiving counts...
+        # left = femur (axis 1), right = tibia (axis 0)
+        left_linear_val, right_linear_val = msg.position.y, msg.position.x  
+
+        rospy.logwarn(str(left_linear_val) + ", " + str(right_linear_val))
+
+        try:
+            drive_command = ('drive', (left_linear_val, right_linear_val))
+            self.command_queue.put_nowait(drive_command)
+        except Queue.Full:
+            pass
+
+        self.last_cmd_vel_time = rospy.Time.now()   # change to be last_cmd_pos_time????
     def pub_current(self):
         current_quantizer = 5
         

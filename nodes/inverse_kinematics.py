@@ -34,6 +34,7 @@ class InverseKinematics:
 
 		self.theta_f = rospy.get_param('~femur_angle', "/theta_f")
 		self.theta_t = rospy.get_param('~tibia_angle', "/theta_t")
+		self.theta_h = rospy.get_param('~hip_angle',"/theta_h")
 		self.foot_position = rospy.get_param('~foot_position', "/footPosition_1")
 
 		# Publishers and Subscribers
@@ -47,6 +48,8 @@ class InverseKinematics:
 		# self.tibia = rospy.Publisher("/theta_t",Float64Stamped, queue_size = 1)
 		self.femur = rospy.Publisher(self.theta_f, Float64, queue_size = 1)
 		self.tibia = rospy.Publisher(self.theta_t, Float64, queue_size = 1)
+		self.hip = rospy.Publisher(self.theta_h, Float64, queue_size = 1)
+
 
 
 		# Class Variables
@@ -79,7 +82,7 @@ class InverseKinematics:
 		# Goal:
 		self.theta_f = None    # angle of femur, from femur ball screw to hip constraint
 		self.theta_t = None    # angle of tibia, from tibia ball screw to knee constraint
-
+		self.theta_h = None	   # angle of hip, from
 
 
 	def pos_callback(self, data):
@@ -122,8 +125,9 @@ class InverseKinematics:
 			print("theta_t: " + str(self.theta_t))
 			self.tibia.publish(self.theta_t)
 
-
-
+			#calculate desired angle of hip (nothing is calculated here as of 12/3/19. This is here to publish a dummy topic to use for developing the hip node)
+			self.theta_t = Float64()
+			self.hip.publish(self.theta_h)
 
 
 
