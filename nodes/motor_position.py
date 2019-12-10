@@ -91,9 +91,11 @@ class MotorPosition:
 		#self.mything = rospy.get_param('param_name',default_value)
 		self.theta_f = rospy.get_param('~femur_angle', "/theta_f")
 		self.theta_t = rospy.get_param('~tibia_angle', "/theta_t")
-		self.position_command = rospy.get_param('~position_command', "/cmd_pos")
+		self.position_command = rospy.get_param('~position_command', "/cmd_pos1")
 		self.cal_t = rospy.get_param('~cal_t',"motor_pos1")
 		self.cal_f = rospy.get_param('~cal_f',"motor_pos2")
+		self.doStuffTrue = rospy.get_param('~motor_initiation',True)
+
 
 
 		self.lim1low_topic   = rospy.get_param('~lim1low_topic', "odrive/odrive1_low_tib")
@@ -108,14 +110,14 @@ class MotorPosition:
 		# self.sub_T = rospy.Subscriber("/theta_t", Float64Stamped, tibia_motor_callback)
 		self.sub_F = rospy.Subscriber(self.theta_f, Float64, self.femur_motor_callback)
 		self.sub_T = rospy.Subscriber(self.theta_t, Float64, self.tibia_motor_callback)
-		self.sub_cal_T = rospy.Subscriber(self.cal_t, Pose, self.tibia_calibration_callback)
-		self.sub_cal_F = rospy.Subscriber(self.cal_f, Pose, self.femur_calibration_callback)
+		# self.sub_cal_T = rospy.Subscriber(self.cal_t, Pose, self.tibia_calibration_callback)
+		# self.sub_cal_F = rospy.Subscriber(self.cal_f, Pose, self.femur_calibration_callback)
 		self.lim1low = False
 		self.lim1high = False
 		self.lim2low = False
 		self.lim2high = False
-		self.init_motor_f = None
-		self.init_motor_t = None
+		self.init_motor_f = 0
+		self.init_motor_t = 0
 
 
 		# actual position (counts) from /encoder_right topic (encoder position) published by odrive_node.py
@@ -128,8 +130,8 @@ class MotorPosition:
 		# Do I set up a timer?
 		# self.pub = rospy.Publisher("/cmd_pos", PoseStamped, queue_size = 1)
 		self.pub = rospy.Publisher(self.position_command, Pose, queue_size = 1)
-		self.pup_cal_t = rospy.Publisher(self.cal_t, Pose, queue_size = 2)
-		self.pup_cal_f = rospy.Publisher(self.cal_f, Pose, queue_size = 2)
+		# self.pup_cal_t = rospy.Publisher(self.cal_t, Pose, queue_size = 2)
+		# self.pup_cal_f = rospy.Publisher(self.cal_f, Pose, queue_size = 2)
 
 
 		# Set up a timed loop
@@ -209,15 +211,24 @@ class MotorPosition:
 	def lim1lowcallback(self,data):
 
 		self.lim1low = data.data
-		if self.lim1low and not self.lim1low_old:
+		if self.lim1low and not self.lim1low_old and self.calibrated_t is False:
+			self.calibrated_t = True
 			rospy.logwarn(data)
+			self.des_BN_t = 3.25
+			self.delta_motor_t = self.des_BN_t * self.distance_to_motor_pos
+			self.des_pos_t = self.delta_motor_t
 		self.lim1low_old = self.lim1low
+
 
 	def lim2highcallback(self,data):
 	
 		self.lim2high = data.data
-		if self.lim2high and not self.lim2high_old:
+		if self.lim2high and not self.lim2high_old and self.calibrated_f is False:
+			self.calibrated_f = True
 			rospy.logwarn(data)
+			self.des_BN_f = 3.75
+			self.delta_motor_f = self.des_BN_f * self.distance_to_motor_pos
+			self.des_pos_f = self.delta_motor_f
 		self.lim2high_old = self.lim2high
 
 	# def init_f_callback(self, data):
@@ -234,46 +245,46 @@ class MotorPosition:
 	# 		self.last_pos_t = self.init_motor_t
 	# 	else:
 	# 		pass
-	def tibia_calibration_callback(self):
-		rospy.logwarn('self.calibrated:')
-		if (self.calibrated_t is False):
-			if self.lim1high and not self.lim1high_old:
-				self.des_BN_t = 3.25
-				self.delta_motor_t = self.des_BN_t * self.distance_to_motor_pos
-				self.des_pos_t = self.delta_motor_t
-				self.lim1high_old = self.lim1high
+	# def tibia_calibration_callback(self):
+	# 	rospy.logwarn('self.calibrated:')
+	# 	if (self.calibrated_t is False):
+	# 		if self.lim1high and not self.lim1high_old:
+	# 			self.des_BN_t = 3.25
+	# 			self.delta_motor_t = self.des_BN_t * self.distance_to_motor_pos
+	# 			self.des_pos_t = self.delta_motor_t
+	# 			self.lim1high_old = self.lim1high
 
-			motor_pos1 = Pose()
-			motor_pos1.position.x = self.des_pos_t
-			motor_pos1.position.y = 0   # Order depends on ODrive set-up
-			motor_pos1.position.z = 0.0
-			motor_pos1.orientation.x = 0.0
-			motor_pos1.orientation.y = 0.0
-			motor_pos1.orientation.z = 0.0
-			motor_pos1.orientation.w = 0.0
-			self.pub.publish(motor_pos1)
-			print("Motor Positions: " + str(motor_pos))
-			self.calibrated_t = True
+	# 		motor_pos1 = Pose()
+	# 		motor_pos1.position.x = self.des_pos_t
+	# 		motor_pos1.position.y = 0   # Order depends on ODrive set-up
+	# 		motor_pos1.position.z = 0.0
+	# 		motor_pos1.orientation.x = 0.0
+	# 		motor_pos1.orientation.y = 0.0
+	# 		motor_pos1.orientation.z = 0.0
+	# 		motor_pos1.orientation.w = 0.0
+	# 		self.pub.publish(motor_pos1)
+	# 		print("Motor Positions: " + str(motor_pos))
+	# 		self.calibrated_t = True
 
-	def femur_calibration_callback(self):
-		if (self.calibrated_f is False):
-			if self.lim2low and not self.lim2low_old:
-				self.des_BN_f = 3.75
-				self.delta_motor_f = self.des_BN_f * self.distance_to_motor_pos
-				self.des_pos_f = self.delta_motor_f
-				self.lim2low_old = self.lim2low
+	# def femur_calibration_callback(self):
+	# 	if (self.calibrated_f is False):
+	# 		if self.lim2low and not self.lim2low_old:
+	# 			self.des_BN_f = 3.75
+	# 			self.delta_motor_f = self.des_BN_f * self.distance_to_motor_pos
+	# 			self.des_pos_f = self.delta_motor_f
+	# 			self.lim2low_old = self.lim2low
 
-			motor_pos2 = Pose()
-			motor_pos2.position.x = 0
-			motor_pos2.position.y = self.des_pos_f   # Order depends on ODrive set-up
-			motor_pos2.position.z = 0.0
-			motor_pos2.orientation.x = 0.0
-			motor_pos2.orientation.y = 0.0
-			motor_pos2.orientation.z = 0.0
-			motor_pos2.orientation.w = 0.0
-			self.pub.publish(motor_pos2)
-			print("Motor Positions: " + str(motor_pos))
-			self.calibrated_f = True
+	# 		motor_pos2 = Pose()
+	# 		motor_pos2.position.x = 0
+	# 		motor_pos2.position.y = self.des_pos_f   # Order depends on ODrive set-up
+	# 		motor_pos2.position.z = 0.0
+	# 		motor_pos2.orientation.x = 0.0
+	# 		motor_pos2.orientation.y = 0.0
+	# 		motor_pos2.orientation.z = 0.0
+	# 		motor_pos2.orientation.w = 0.0
+	# 		self.pub.publish(motor_pos2)
+	# 		print("Motor Positions: " + str(motor_pos))
+	# 		self.calibrated_f = True
 
 	def femur_motor_callback(self, data):
 		# Femur angle is calculated from Inverse Kinematics code, zero is when the hip is tucked 
@@ -281,7 +292,8 @@ class MotorPosition:
 		print(self.theta_f)
 
 		# Calculations will not continue if no init_motor_f does not have a value 
-		if(self.init_motor_t is not None or self.calibrated_f is True):
+		if(self.init_motor_t is not None and self.calibrated_f is True):
+			# rospy.logwarn('femur_motor_callback')
 			# Calculations will not continue if theta_f does not have a value
 			if(self.theta_f is not None):
 				print("Received theta_f!")
@@ -352,15 +364,17 @@ class MotorPosition:
 
 			else:
 				pass
-		elif(self.init_motor_f is not None and self.calibrated_f is False):
+		elif(self.init_motor_f is not None and self.calibrated_f is False and self.doStuffTrue is True):
 				self.des_pos_f=self.des_pos_f-10
+				# rospy.logwarn('elif_femur')
 
 		else:
 			pass
 
 	def tibia_motor_callback(self, data):
+		# rospy.logwarn('entering tibia motor callback')
 		# Calculations will not continue if no init_motor_f does not have a value 
-		if(self.init_motor_t is not None or self.calibrated_t is True):
+		if(self.init_motor_t is not None and( self.calibrated_t is True and self.calibrated_f is True)):
 			# Calculations will not continue if theta_f does not have a value
 			if(self.theta_t is not None):
 				print("Received theta_f and theta_t!")
@@ -453,8 +467,20 @@ class MotorPosition:
 				# self.last_pos_t = self.des_pos_t
 			else:
 				pass
-		elif(self.init_motor_t is not None and self.calibrated_t is False):
-			self.des_pos_t=self.des_pos_t-10
+		elif(self.init_motor_t is not None and (self.calibrated_t is False or self.calibrated is False) and self.doStuffTrue is True):
+			self.des_pos_t=self.des_pos_t-10 
+			motor_pos = Pose()
+			motor_pos.position.x = self.des_pos_t
+			motor_pos.position.y = self.des_pos_f   # Order depends on ODrive set-up
+			motor_pos.position.z = 0.0
+			motor_pos.orientation.x = 0.0
+			motor_pos.orientation.y = 0.0
+			motor_pos.orientation.z = 0.0
+			motor_pos.orientation.w = 0.0
+			self.pub.publish(motor_pos)
+			print("Motor Positions: " + str(motor_pos))
+			# rospy.logwarn('elif_tibia')
+
 		else:
 			pass
 

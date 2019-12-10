@@ -45,7 +45,7 @@ class HipPosition:
 
 	def hip1_pos_callback(self, data):
 			# Femur angle is calculated from Inverse Kinematics code, zero is when the hip is tucked 
-			self.theta_h = data.data 
+			self.theta_h = data.data -90
 			print(self.theta_h)
 
 			# Calculations will not continue if no init_motor_f does not have a value 
