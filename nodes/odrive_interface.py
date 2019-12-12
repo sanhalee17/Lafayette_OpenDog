@@ -5,6 +5,7 @@ import sys
 import time
 import logging
 import traceback
+import rospy
 
 import odrive
 from odrive.enums import *
@@ -53,6 +54,7 @@ class ODriveInterfaceAPI(object):
         self.disconnect()
                     
     def connect(self, port=None, right_axis=0, timeout=30,snum='56501121856822'): # port=/dev/ttyACM0
+
         # Edit by GGC on June 14: 
         # Checks if driver is connected. If it is, reports that it's reconnecting.
         # Tries to find an ODrive to connect to with find_any within timeout time (seconds???)
@@ -329,20 +331,33 @@ class ODriveInterfaceAPI(object):
         self.axes[0].requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
         self.axes[0].controller.config.control_mode = CTRL_MODE_POSITION_CONTROL
         self.axes[0].controller.config.vel_limit = 200000.0
+        # self.axes[0].controller.pos_setpoint = 0
+        # time.sleep(2)
+        # self.axes[0].controller.pos_setpoint = 10000
+        # time.sleep(1)
         self.axes[0].controller.pos_setpoint = 0
+        self.current_state_0 = self.axes[0].current_state
+
         
         #added Nov.13.2019 by SL:
-        self.axes[0].encoder.config.offset = -49152
+        # self.axes[0].encoder.config.offset = -49152
 
         self.axes[1].requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
         self.axes[1].controller.config.control_mode = CTRL_MODE_POSITION_CONTROL
         self.axes[1].controller.config.vel_limit = 200000.0
         self.axes[1].controller.pos_setpoint = 0
+        # time.sleep(2)
+        # self.axes[1].controller.pos_setpoint = 10000
+        # time.sleep(1)
+        # self.axes[1].controller.pos_setpoint = 0
+        self.current_state_1 = self.axes[1].current_state
+
+        # time.sleep(10)
 
         #added Nov.13.2019 by SL:
-        self.axes[0].encoder.config.offset = -49152
+        # self.axes[0].encoder.config.offset = -49152
 
-        return True
+        return (True, self.current_state_0, self.current_state_1)
 
 
     def release(self):

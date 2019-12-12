@@ -81,7 +81,7 @@ class ODriveNode(object):
         self.wheel_track = float(rospy.get_param('~wheel_track', 0.285)) # m, distance between wheel centres
         self.tyre_circumference = float(rospy.get_param('~tyre_circumference', 0.341)) # used to translate velocity commands in m/s into motor rpm
         self.doStuffTrue = rospy.get_param('~motor_initialization',True)
-        self.doStuff = False
+        self.doStuff = True
         
         self.connect_on_startup   = rospy.get_param('~connect_on_startup', True)  # Edit by GGC on June 14: Does not automatically connect
         self.calibrate_on_startup = rospy.get_param('~calibrate_on_startup', False)####################
@@ -134,7 +134,7 @@ class ODriveNode(object):
             self.pos_subscribe = rospy.Subscriber(self.pos_cmd_topic_name, Pose, self.cmd_pos_callback, queue_size=2)
             self.hip1_subscribe = rospy.Subscriber(self.hip_cmd_topic1_name, Pose, self.hip_pos1_callback, queue_size=2)
             self.hip2_subscribe = rospy.Subscriber(self.hip_cmd_topic2_name, Pose, self.hip_pos2_callback, queue_size=2)
-            print("Subscribed to " +str(self.pos_cmd_topic_name))
+            print("Subscribed to /cmd_pos")
         elif self.mode == "velocity":
             self.vel_subscribe = rospy.Subscriber("/cmd_vel", Twist, self.cmd_vel_callback, queue_size=2)
             print("Subscribed to /cmd_vel")
@@ -278,7 +278,7 @@ class ODriveNode(object):
 
             # check for errors
             if self.driver:
-               
+                
                 try:
                     # driver connected, but fast_comms not active -> must be an error?
                     if self.driver.get_errors(clear=True):
@@ -296,7 +296,7 @@ class ODriveNode(object):
 
                 if not self.connect_on_startup:
                     rospy.loginfo("ODrive node started, but not connected.")
-                    continue
+                    # continue
                 else:
                     rospy.logwarn("HELLOOOOOOO")
                     rospy.logwarn("CONNECTING TO ODRIVE: "+str(self.serial_number))
@@ -306,12 +306,8 @@ class ODriveNode(object):
                         rospy.logwarn("CALIBRATING ODRIVE: "+str(self.serial_number))
                         self.calibrate_motor(True)
                         if self.engage_on_startup:
-                            rospy.logwarn("pre-sleep")
-                            rospy.sleep(5)
-
                             rospy.logwarn("GETTING ENGAGED TO ODRIVE: "+str(self.serial_number))
-                            output = self.engage_motor(True)
-                            rospy.logwarn(output[1])
+                            self.engage_motor(True)
                             self.doStuff = True
                             # self.motor_initiation = rospy.Publisher(self.doStuff, bool, queue_size = 2)
                             # self.doStuffTrue.publish(self.doStuff)
@@ -337,7 +333,6 @@ class ODriveNode(object):
             
             # Handle reading from Odrive and sending odometry
             if self.fast_timer_comms_active:
-                rospy.logwarn("fast timer active")
                 if self.driver.left_axis is not None:
                     try:
                         
@@ -371,25 +366,22 @@ class ODriveNode(object):
                 self.pub_current()
                 
             
-            # try:
-            #     # check and stop motor if no vel command has been received in > 1s
-            #     if self.fast_timer_comms_active:
-            #         rospy.logwarn("fast_time_comm_active")
-            #         if (time_now - self.last_cmd_vel_time).to_sec() > 0.5 and self.last_speed > 0:
-            #             rospy.logwarn("stopping the motor - no vel command")
-            #             self.driver.drive_vel(0,0)  # *******CHECK THIS*******************************
-            #             self.last_speed = 0
-            #             self.last_cmd_vel_time = time_now
-            #         # release motor after 10s stopped
-            #         if (time_now - self.last_cmd_vel_time).to_sec() > 10.0 and self.driver.engaged():
-            #             self.driver.release() # and release            
-            # except:
-            #     rospy.logerr("Fast timer exception on cmd_vel timeout:" + traceback.format_exc())
-            #     self.fast_timer_comms_active = False
+            try:
+                # check and stop motor if no vel command has been received in > 1s
+                if self.fast_timer_comms_active:
+                    if (time_now - self.last_cmd_vel_time).to_sec() > 0.5 and self.last_speed > 0:
+                        self.driver.drive_vel(0,0)  # *******CHECK THIS*******************************
+                        self.last_speed = 0
+                        self.last_cmd_vel_time = time_now
+                    # release motor after 10s stopped
+                    if (time_now - self.last_cmd_vel_time).to_sec() > 10.0 and self.driver.engaged():
+                        self.driver.release() # and release            
+            except:
+                rospy.logerr("Fast timer exception on cmd_vel timeout:" + traceback.format_exc())
+                self.fast_timer_comms_active = False
+            
             # handle sending drive commands.
             # from here, any errors return to get out
-            
-
             if self.fast_timer_comms_active and not self.command_queue.empty():
                 # check to see if we're initialised and engaged motor
                 # try:
@@ -405,7 +397,6 @@ class ODriveNode(object):
                     return
                 
                 if motor_command[0] == 'drive':
-         
                     try:
                         # Edit by GGC on June 28
                         # if not self.driver.engaged():
@@ -435,15 +426,14 @@ class ODriveNode(object):
                         # Edit by GGC on July 4: Changing "is" to "==" allows the if-else block to work properly
                         if self.mode == "position":
                             if not self.driver.engaged():
-                        
                                 self.driver.engage_pos()
                             self.driver.drive_pos(left_linear_val, right_linear_val)
                             self.last_cmd_vel_time = time_now   # change to be last_cmd_pos_time????
                         else:
-                            self.driver.drive_vel(left_linear_val, right_linear_val)
-                            self.driver.engage_vel()
+                            if not self.driver.engaged():
+                                self.driver.engage_vel()
                             
-                      
+                            self.driver.drive_vel(left_linear_val, right_linear_val)
                             self.last_speed = max(abs(left_linear_val), abs(right_linear_val))
                             self.last_cmd_vel_time = time_now
 
@@ -590,10 +580,8 @@ class ODriveNode(object):
 
         # Edit by GGC on July 4: Changing "is" to "==" allows the if-else block to work properly
         if self.mode == "position":
-            result = self.driver.engage_pos()
-            if not result[0]:
+            if not self.driver.engage_pos():
                 return (False, "Failed to engage_pos motor.")
-            rospy.logwarn("axis0 " +str(result[1]) +"," + "axis1 " + str(result[2]))
             return (True, "Engage_pos motor success.")
             self.engaged = True
         else:
@@ -628,7 +616,6 @@ class ODriveNode(object):
         if not self.driver.clearE():
             return (False, "Failed to dump errors.")
         return (True, "Dumped errors success.")
-
 
 
     def reset_odometry(self, request):

@@ -194,8 +194,8 @@ class MotorPosition:
 		self.des_pos_t = 0	# desired tibia motor position (in encoder counts)
 		# self.last_pos_t = 0
 		self.delta_motor_t = None
-		self.calibrated_t = False
-		self.calibrated_f = False
+		self.calibrated_t = True
+		self.calibrated_f = True
 
 
 		# Conversion
@@ -364,8 +364,8 @@ class MotorPosition:
 
 			else:
 				pass
-		elif(self.init_motor_f is not None and self.calibrated_f is False and self.doStuffTrue is True):
-				self.des_pos_f=self.des_pos_f-10
+		# elif(self.init_motor_f is not None and self.calibrated_f is False and self.doStuffTrue is True):
+				# self.des_pos_f=self.des_pos_f-10
 				# rospy.logwarn('elif_femur')
 
 		else:
@@ -375,10 +375,12 @@ class MotorPosition:
 		# rospy.logwarn('entering tibia motor callback')
 		# Calculations will not continue if no init_motor_f does not have a value 
 		if(self.init_motor_t is not None and( self.calibrated_t is True and self.calibrated_f is True)):
+			self.theta_t = data.data
 			# Calculations will not continue if theta_f does not have a value
 			if(self.theta_t is not None):
+				rospy.logwarn("enter tibia callback")
 				print("Received theta_f and theta_t!")
-				self.theta_t = data.data
+				
 				print("theta_t = " + str(self.theta_t))
 
 				# Calculate the angle between tibia ball screw (KN) and link (NL)
