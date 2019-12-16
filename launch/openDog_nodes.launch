@@ -1,0 +1,112 @@
+<!-- Edit by SL on Nov.24 -->
+<launch>
+    <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics_1">
+        <param name = "femur_angle" value = "/theta_f_1"/>
+        <param name = "tibia_angle" value = "/theta_t_1"/>
+        <param name = "hip_angle" value = "/theta_h_1"/>
+        <param name = "foot_position" value = "/footPosition_1"/>
+    </node>
+
+    <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics_2">
+        <param name = "femur_angle" value = "/theta_f_2"/>
+        <param name = "tibia_angle" value = "/theta_t_2"/>
+        <param name = "hip_angle" value = "/theta_h_2"/>
+        <param name = "foot_position" value = "/footPosition_2"/>
+    </node>
+
+    <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics_3">
+        <param name = "femur_angle" value = "/theta_f_3"/>
+        <param name = "tibia_angle" value = "/theta_t_3"/>
+        <param name = "hip_angle" value = "/theta_h_3"/>
+        <param name = "foot_position" value = "/footPosition_3"/>
+    </node>
+
+    <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics_4">
+        <param name = "femur_angle" value = "/theta_f_4"/>
+        <param name = "tibia_angle" value = "/theta_t_4"/>
+        <param name = "hip_angle" value = "/theta_h_4"/>
+        <param name = "foot_position" value = "/footPosition_4"/>
+    </node>
+
+
+    <node pkg="odrive_ros" type="motor_position.py" name="motor_position_1">
+        <param name = "femur_angle" value = "/theta_f_1"/>
+        <param name = "tibia_angle" value = "/theta_t_1"/>
+        <param name = "position_command" value = "/cmd_pos1"/>
+        <param name = "lim1low_topic" value = "odrive/odrive1_low_tib"/>
+        <param name = "lim2high_topic" value = "odrive/odrive1_high_fem"/>
+    </node>
+
+    <node pkg="odrive_ros" type="motor_position.py" name="motor_position_2">
+        <param name = "femur_angle" value = "/theta_f_2"/>
+        <param name = "tibia_angle" value = "/theta_t_2"/>
+        <param name = "position_command" value = "/cmd_pos2"/>
+        <param name = "lim1low_topic" value = "odrive/odrive2_low_tib"/>
+        <param name = "lim2high_topic" value = "odrive/odrive2_high_fem"/>
+    </node>
+
+    <node pkg="odrive_ros" type="motor_position.py" name="motor_position_3">
+        <param name = "femur_angle" value = "/theta_f_3"/>
+        <param name = "tibia_angle" value = "/theta_t_3"/>
+        <param name = "position_command" value = "/cmd_pos3"/>
+        <param name = "lim1low_topic" value = "odrive/odrive3_low_tib"/>
+        <param name = "lim2high_topic" value = "odrive/odrive3_high_fem"/>
+    </node>
+    <node pkg="odrive_ros" type="motor_position.py" name="motor_position_4">
+        <param name = "femur_angle" value = "/theta_f_4"/>
+        <param name = "tibia_angle" value = "/theta_t_4"/>
+        <param name = "position_command" value = "/cmd_pos4"/>
+        <param name = "lim1low_topic" value = "odrive/odrive3_low_tib"/>
+        <param name = "lim2high_topic" value = "odrive/odrive3_high_fem"/>
+    </node>
+ 
+    <node pkg="odrive_ros" type="hip_position.py" name="hip_position_1">
+        <param name = "hip1_angle" value = "/theta_h_1"/>
+        <param name = "position_command" value = "/cmd_pos5"/>
+    </node>
+
+    <node pkg="odrive_ros" type="hip_position.py" name="hip_position_2">
+        <param name = "hip1_angle" value = "/theta_h_2"/>
+        <param name = "position_command" value = "/cmd_pos6"/>
+    </node>
+
+    <node pkg="odrive_ros" type="hip_position.py" name="hip_position_3">
+        <param name = "hip1_angle" value = "/theta_h_3"/>
+        <param name = "position_command" value = "/cmd_pos7"/>
+    </node>
+
+    <node pkg="odrive_ros" type="hip_position.py" name="hip_position_4">
+        <param name = "hip1_angle" value = "/theta_h_4"/>
+        <param name = "position_command" value = "/cmd_pos8"/>
+    </node>
+
+    <node pkg ="odrive_ros" type="new_foot_path.py" name="pub_foot_path_1">
+        <param name = "foot_position" value = "/footPosition_1"/>
+        <param name = "phase_shift" value = "0"/>
+    </node>
+
+    <node pkg ="odrive_ros" type="new_foot_path.py" name="pub_foot_path_2">
+        <param name = "foot_position" value = "/footPosition_2"/>
+        <param name = "phase_shift" value = "pi/4"/>
+    </node>
+
+    <node pkg ="odrive_ros" type="new_foot_path.py" name="pub_foot_path_3">
+        <param name = "foot_position" value = "/footPosition_3"/>
+        <param name = "phase_shift" value = "3*pi/4"/>
+    </node>
+
+    <node pkg ="odrive_ros" type="new_foot_path.py" name="pub_foot_path_4">
+        <param name = "foot_position" value = "/footPosition_4"/>
+        <param name = "phase_shift" value = "pi/2"/>
+    </node>
+
+
+
+   <!--  <node pkg="odrive_ros" type="inverse_kinematics.py" name="inverse_kinematics_2"/>
+        <param name = "femur_angle" value = "/theta_f_2"/>
+        <param name = "tibia_angle" value = "/theta_t_2"/>
+    </node> 
+ -->
+
+    
+</launch>
