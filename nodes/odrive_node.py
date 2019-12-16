@@ -13,6 +13,7 @@ from std_msgs.msg import Float64, Int32,Bool
 from geometry_msgs.msg import Twist, TransformStamped, Pose
 from nav_msgs.msg import Odometry
 import std_srvs.srv
+import numpy
 
 import time
 import math
@@ -191,6 +192,10 @@ class ODriveNode(object):
             self.odom_msg.twist.twist.angular.x = 0.0 # or roll
             self.odom_msg.twist.twist.angular.y = 0.0 # or pitch... only yaw
             self.odom_msg.twist.twist.angular.z = 0.0
+            self.rollover_l = 0
+            self.rollover_r = 0
+            self.real_encoder_l = 0
+            self.real_encoder_r = 0
             
             # store current location to be updated. 
             self.x = 0.0
@@ -796,20 +801,39 @@ class ODriveNode(object):
         #                vel_l, -vel_r,
         #                vel_l/encoder_cpr, vel_r/encoder_cpr, self.odom_msg.twist.twist.linear.x, self.odom_msg.twist.twist.angular.z,
         #                self.driver.left_axis.encoder.pos_cpr, self.driver.right_axis.encoder.pos_cpr))
-        
+        half_cpr = self.encoder_cpr/2.0
         # Position
         delta_pos_l = self.new_pos_l - self.old_pos_l
         delta_pos_r = self.new_pos_r - self.old_pos_r
-        
+        delta_pos_r1 = delta_pos_r
+        delta_pos_l1 = delta_pos_l
+
+
         self.old_pos_l = self.new_pos_l
         self.old_pos_r = self.new_pos_r
+
         
+        if abs(delta_pos_l1) >  half_cpr: 
+            rospy.logwarn('yeyeye')
+            self.rollover_l = self.rollover_l + numpy.sign(delta_pos_l)
+            self.real_encoder_l = self.new_pos_l+self.rollover_l*self.encoder_cpr
+
+
+        if abs(delta_pos_r1) >  half_cpr: 
+            self.rollover_r = self.rollover_r + numpy.sign(delta_pos_r)
+            self.real_encoder_r = self.new_pos_r+self.rollover_r*self.encoder_cpr
+
         # Check for overflow. Assume we can't move more than half a circumference in a single timestep. 
-        half_cpr = self.encoder_cpr/2.0
+       
         if   delta_pos_l >  half_cpr: delta_pos_l = delta_pos_l - self.encoder_cpr
         elif delta_pos_l < -half_cpr: delta_pos_l = delta_pos_l + self.encoder_cpr
         if   delta_pos_r >  half_cpr: delta_pos_r = delta_pos_r - self.encoder_cpr
         elif delta_pos_r < -half_cpr: delta_pos_r = delta_pos_r + self.encoder_cpr
+
+
+     
+
+
         
         # counts to metres
         delta_pos_l_m = delta_pos_l / self.m_s_to_value
@@ -863,10 +887,10 @@ class ODriveNode(object):
         self.tf_msg.transform.rotation.w = q[3]
         
         if self.publish_raw_odom:
-            self.raw_odom_publisher_encoder_left.publish(self.new_pos_l)
+            self.raw_odom_publisher_encoder_left.publish(self.real_encoder_l)
             # Temporary Edit by GGC on June 25: commented this so I could test pos_control with rostopic pub
             # REMEMBER TO UNCOMMENT THIS WHEN WE USE THE MOTOR!
-            self.raw_odom_publisher_encoder_right.publish(self.new_pos_r)    
+            self.raw_odom_publisher_encoder_right.publish(self.real_encoder_r)    
             self.raw_odom_publisher_vel_left.publish(self.vel_l)
             self.raw_odom_publisher_vel_right.publish(self.vel_r)
         

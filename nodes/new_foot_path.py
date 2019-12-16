@@ -18,22 +18,22 @@ class FootPath:
 	def __init__(self):
 
 		self.foot_position = rospy.get_param('~foot_position', "/footPosition_1")
-		self.delay =rospy.get_param('~delay', "/0")
+		self.phase_shift = rospy.get_param('~phase_shift', pi/2)
 
-		#create the sparse path. 
-		self.S = array([0,3,9,12,18])
-		# self.X = array([2,2,8,8,2])
-		self.X = array([3,3,9,9,3])
-		self.Y = array([25,22,22,25,25])
+		# define parameters for sinusoidal path
 
-		#linear speed (constant)
-		self.U = 1	#inches per second
+		self.leg_pace = 2.0 # pace of gait
+
+		self.x_center = 6
+		self.x_stride = 3
+
+		self.y_center = 25
+		self.y_lift = -3
+
 
 		# Initialize "current" values
-		self.Snow,self.xnow,self.ynow,self.tnow = 0,0,0,0
+		self.ynow,self.tnow = 0,0
 
-		# Initialize number of cycles (laps)
-		self.Laps = 0
 
 		# Set up a publisher
 		self.pub = rospy.Publisher(self.foot_position, PoseStamped, queue_size = 1)
@@ -44,21 +44,15 @@ class FootPath:
 
 	def timer_callback(self, data):
 		try:
-			time.sleep(2)
 			#what is the time now?
 			# self.tnow = rospy.Time.now()
 			self.tnow = time.time()
+		
+			# now where should the foot be?
+			self.xnow = self.x_center + self.x_stride*sin(self.leg_pace*self.tnow - self.phase_shift)
+			self.ynow = self.y_center + self.y_lift*sin(self.leg_pace*self.tnow)
 
-			Smax = self.S[-1]#very last point in the S vector is the max
-			#what is the TOTAL distance traveled?
-			self.Snow = self.tnow * self.U
-			#how many laps have we done?
-			self.Laps = floor(self.Snow/Smax)
-			#where are we at on THIS lap?
-			Srelative = self.Snow - (self.Laps*Smax)
-			#now where should the foot be?
-			self.xnow = interp(Srelative,self.S,self.X)
-			self.ynow = interp(Srelative,self.S,self.Y)
+			if (self.ynow) > self.y_center: self.ynow = self.y_center
 
 			# Create and publish PoseStamped message containing the (x,y) position of the foot
 			# Eventually will include z when hip motion is included
