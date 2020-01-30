@@ -19,3 +19,5 @@
    Launch file is updated. It conects 6 odrives successfully
    # Nov.28.2019
    Changed opendog node organization for forward walking motion. The individual leg will have individual foot path. Still need to figure out phase shift.
+   #Jan.30.2020
+   Odrive connection sequence is created; four odrives will connect in linear order. Yet it does not work as ideal. Need further debugging
