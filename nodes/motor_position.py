@@ -378,7 +378,7 @@ class MotorPosition:
 			self.theta_t = data.data
 			# Calculations will not continue if theta_f does not have a value
 			if(self.theta_t is not None):
-				rospy.logwarn("enter tibia callback")
+				#rospy.logwarn("enter tibia callback")
 				print("Received theta_f and theta_t!")
 				
 				print("theta_t = " + str(self.theta_t))

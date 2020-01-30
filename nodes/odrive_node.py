@@ -82,6 +82,12 @@ class ODriveNode(object):
         self.wheel_track = float(rospy.get_param('~wheel_track', 0.285)) # m, distance between wheel centres
         self.tyre_circumference = float(rospy.get_param('~tyre_circumference', 0.341)) # used to translate velocity commands in m/s into motor rpm
         self.doStuffTrue = rospy.get_param('~motor_initialization',True)
+
+        self.axis_eng = Bool()
+        self.axis_eng.data = False
+        self.prev_axis = False
+        self.prev_axis_topic = rospy.get_param('~previous_axis', "motor_engage")
+        
         self.doStuff = False
         
         self.connect_on_startup   = rospy.get_param('~connect_on_startup', True)  # Edit by GGC on June 14: Does not automatically connect
@@ -149,6 +155,8 @@ class ODriveNode(object):
         self.lim2low_sub = rospy.Subscriber(self.lim2low_topic ,Bool,self.lim2lowcallback)
         self.lim2high_sub = rospy.Subscriber(self.lim2high_topic ,Bool,self.lim2highcallback)
 
+        self.prev_axis_sub = rospy.Subscriber(self.prev_axis_topic ,Bool,self.prev_axis_callback)
+        self.axis_eng_pub = rospy.Publisher('~motor_engage', Bool, queue_size=2)
 
         if self.publish_current:
             self.current_loop_count = 0
@@ -259,7 +267,9 @@ class ODriveNode(object):
         if self.lim2high and not self.lim2high_old:
                 rospy.logwarn(data)
         self.lim2high_old = self.lim2high
-
+   
+    def prev_axis_callback(self,data):
+        self.prev_axis = data.data
 
     def main_loop(self):
         # Main control, handle startup and error handling
@@ -303,31 +313,38 @@ class ODriveNode(object):
                     rospy.loginfo("ODrive node started, but not connected.")
                     continue
                 else:
-                    rospy.logwarn("HELLOOOOOOO")
-                    rospy.logwarn("CONNECTING TO ODRIVE: "+str(self.serial_number))
-                    message = self.connect_driver(True)
-                    rospy.logwarn(message[1])
-                    if self.calibrate_on_startup:
-                        rospy.logwarn("CALIBRATING ODRIVE: "+str(self.serial_number))
-                        self.calibrate_motor(True)
-                        if self.engage_on_startup:
-                            rospy.logwarn("pre-sleep")
-                            rospy.sleep(5)
+                    if (self.prev_axis is True) or (self.prev_axis_topic == 'odrive/previous_axis1') or (self.axis_eng == True):
+                        rospy.logwarn("HELLOOOOOOO")
+                        rospy.logwarn("CONNECTING TO ODRIVE: "+str(self.serial_number))
+                        message = self.connect_driver(True)
+                        rospy.logwarn(message[1])
+                        if self.calibrate_on_startup:
+                            rospy.logwarn("CALIBRATING ODRIVE: "+str(self.serial_number))
+                            self.calibrate_motor(True)
+                            if self.engage_on_startup:
+                                rospy.logwarn("pre-sleep")
+                                rospy.sleep(5)
 
-                            rospy.logwarn("GETTING ENGAGED TO ODRIVE: "+str(self.serial_number))
-                            output = self.engage_motor(True)
-                            rospy.logwarn(output[1])
-                            self.doStuff = True
-                            # self.motor_initiation = rospy.Publisher(self.doStuff, bool, queue_size = 2)
-                            # self.doStuffTrue.publish(self.doStuff)
+                                rospy.logwarn("GETTING ENGAGED TO ODRIVE: "+str(self.serial_number))
+                                output = self.engage_motor(True)
+                                rospy.logwarn(output[1])
+                                self.doStuff = True
+                                self.axis_eng.data = True
+                                rospy.logwarn(self.axis_eng.data)
+                                
+                                self.axis_eng_pub.publish(self.axis_eng)
+                                
+                                
+                                # self.motor_initiation = rospy.Publisher(self.doStuff, bool, queue_size = 2)
+                                # self.doStuffTrue.publish(self.doStuff)
 
                 
                 # if not self.connect_driver(None)[0]:
                 #     rospy.logerr("Failed to connect.") # TODO: can we check for timeout here?
                 #     continue
         
-            else:
-                pass # loop around and try again
+                    else:
+                        pass # loop around and try again
         
     def fast_timer(self, timer_event):
         if self.doStuff:
@@ -342,7 +359,7 @@ class ODriveNode(object):
             
             # Handle reading from Odrive and sending odometry
             if self.fast_timer_comms_active:
-                rospy.logwarn("fast timer active")
+                #rospy.logwarn("fast timer active")
                 if self.driver.left_axis is not None:
                     try:
                         
@@ -814,7 +831,7 @@ class ODriveNode(object):
 
         
         if abs(delta_pos_l1) >  half_cpr: 
-            rospy.logwarn('yeyeye')
+            #rospy.logwarn('yeyeye')
             self.rollover_l = self.rollover_l + numpy.sign(delta_pos_l)
             self.real_encoder_l = self.new_pos_l+self.rollover_l*self.encoder_cpr
 

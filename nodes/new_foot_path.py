@@ -8,31 +8,34 @@ import Queue   # might not be needed
 import rospy
 import sys
 import roslib
+import math
 roslib.load_manifest('odrive_ros')
+
 
 # Imports message type
 from geometry_msgs.msg import PoseStamped
+from std_msgs.msg import Float64
 
 
 class FootPath:
 	def __init__(self):
 
 		self.foot_position = rospy.get_param('~foot_position', "/footPosition_1")
-		self.phase_shift = rospy.get_param('~phase_shift', pi/2)
+		self.phase_shift = rospy.get_param('~phase_shift', '0.0')
 
 		# define parameters for sinusoidal path
 
 		self.leg_pace = 2.0 # pace of gait
 
-		self.x_center = 6
-		self.x_stride = 3
+		self.x_center = 6.0
+		self.x_stride = 3.0
 
-		self.y_center = 25
-		self.y_lift = -3
+		self.y_center = 25.0
+		self.y_lift = -3.0
 
 
 		# Initialize "current" values
-		self.ynow,self.tnow = 0,0
+		self.ynow,self.tnow = 0.0, 0.0
 
 
 		# Set up a publisher
@@ -49,7 +52,9 @@ class FootPath:
 			self.tnow = time.time()
 		
 			# now where should the foot be?
+			# rospy.logwarn(self.x_center, self.x_stride, self.leg_pace, self.tnow, self.phase_shift)
 			self.xnow = self.x_center + self.x_stride*sin(self.leg_pace*self.tnow - self.phase_shift)
+
 			self.ynow = self.y_center + self.y_lift*sin(self.leg_pace*self.tnow)
 
 			if (self.ynow) > self.y_center: self.ynow = self.y_center
