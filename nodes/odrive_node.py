@@ -269,7 +269,11 @@ class ODriveNode(object):
         self.lim2high_old = self.lim2high
    
     def prev_axis_callback(self,data):
-        self.prev_axis = data.data
+        #self.prev_axis = data.data
+        if self.prev_axis == data.data:
+            message = self.connect_driver(True)
+            rospy.logwarn(message)
+
 
     def main_loop(self):
         # Main control, handle startup and error handling
@@ -312,27 +316,32 @@ class ODriveNode(object):
                 if not self.connect_on_startup:
                     rospy.loginfo("ODrive node started, but not connected.")
                     continue
-                else:
-                    if (self.prev_axis is True) or (self.prev_axis_topic == 'odrive/previous_axis1') or (self.axis_eng == True):
-                        rospy.logwarn("HELLOOOOOOO")
-                        rospy.logwarn("CONNECTING TO ODRIVE: "+str(self.serial_number))
+                else: #if odrive wants to connect automatically
+                    if (self.prev_axis is True) or (self.prev_axis_topic == 'odrive/previous_axis1') or (self.axis_eng is True): #connection sequence starts if previous axis is connected or previous axis topic is something
+                        #rospy.logwarn("HELLOOOOOOO") 
+                        
+                        rospy.logwarn("CONNECTING TO ODRIVE: "+str(self.serial_number)) 
                         message = self.connect_driver(True)
                         rospy.logwarn(message[1])
+
                         if self.calibrate_on_startup:
                             rospy.logwarn("CALIBRATING ODRIVE: "+str(self.serial_number))
                             self.calibrate_motor(True)
+                        
                             if self.engage_on_startup:
                                 rospy.logwarn("pre-sleep")
-                                rospy.sleep(5)
+                                rospy.sleep(2) #this might be a problem? too long? if this is an issue, test with different time 
 
                                 rospy.logwarn("GETTING ENGAGED TO ODRIVE: "+str(self.serial_number))
                                 output = self.engage_motor(True)
                                 rospy.logwarn(output[1])
                                 self.doStuff = True
                                 self.axis_eng.data = True
+                                self.prev_axis = True
                                 rospy.logwarn(self.axis_eng.data)
-                                
-                                self.axis_eng_pub.publish(self.axis_eng)
+
+                                self.axis_eng_pub.publish(self.axis_eng) 
+                                rospy.logwarn(self.axis_eng)
                                 
                                 
                                 # self.motor_initiation = rospy.Publisher(self.doStuff, bool, queue_size = 2)
