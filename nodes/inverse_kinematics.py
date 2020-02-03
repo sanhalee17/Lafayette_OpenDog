@@ -129,6 +129,8 @@ class InverseKinematics:
 			#calculate desired angle of hip (nothing is calculated here as of 12/3/19. This is here to publish a dummy topic to use for developing the hip node)
 			self.theta_t = Float64()
 			self.hip.publish(self.theta_h)
+			#rospy.logwarn(str(self.theta_t) + ', ' + str(self.theta_f))
+
 
 
 

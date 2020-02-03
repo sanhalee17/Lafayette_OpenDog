@@ -21,13 +21,13 @@ class FootPath:
 	def __init__(self):
 
 		self.foot_position = rospy.get_param('~foot_position', "/footPosition_1")
-		self.phase_shift = rospy.get_param('~phase_shift', '0.0')
+		self.phase_shift = rospy.get_param('~phase_shift', 0.0)
 
 		# define parameters for sinusoidal path
 
 		self.leg_pace = 2.0 # pace of gait
 
-		self.x_center = 6.0
+		self.x_center = 2.0
 		self.x_stride = 3.0
 
 		self.y_center = 25.0

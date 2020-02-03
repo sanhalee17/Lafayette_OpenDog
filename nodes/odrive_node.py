@@ -85,8 +85,11 @@ class ODriveNode(object):
 
         self.axis_eng = Bool()
         self.axis_eng.data = False
+        self.axis_eng_topic = rospy.get_param('~axis_engage', "previous_axis_engaged")
+
         self.prev_axis = False
-        self.prev_axis_topic = rospy.get_param('~previous_axis', "motor_engage")
+        self.prev_axis_topic = rospy.get_param('~previous_axis', "prev_motor_engage")
+        rospy.logwarn(self.prev_axis_topic)
         
         self.doStuff = False
         
@@ -155,8 +158,11 @@ class ODriveNode(object):
         self.lim2low_sub = rospy.Subscriber(self.lim2low_topic ,Bool,self.lim2lowcallback)
         self.lim2high_sub = rospy.Subscriber(self.lim2high_topic ,Bool,self.lim2highcallback)
 
-        self.prev_axis_sub = rospy.Subscriber(self.prev_axis_topic ,Bool,self.prev_axis_callback)
+        #self.prev_axis_sub = rospy.Subscriber(self.prev_axis_topic ,Bool,self.prev_axis_callback)
+        self.axis_eng_sub = rospy.Subscriber(self.prev_axis_topic, Bool, self.prev_axis_callback)
+
         self.axis_eng_pub = rospy.Publisher('~motor_engage', Bool, queue_size=2)
+        self.prev_axis_pub = rospy.Publisher('~prev_axis_topic', Bool, queue_size=2)
 
         if self.publish_current:
             self.current_loop_count = 0
@@ -267,12 +273,14 @@ class ODriveNode(object):
         if self.lim2high and not self.lim2high_old:
                 rospy.logwarn(data)
         self.lim2high_old = self.lim2high
+
+    #Added by SL Jan. 30. 2020, further debugged Jan.31.2020
    
     def prev_axis_callback(self,data):
         #self.prev_axis = data.data
-        if self.prev_axis == data.data:
-            message = self.connect_driver(True)
-            rospy.logwarn(message)
+        self.prev_axis = data.data  #two equal sign?
+        #message = self.connect_driver(True)
+        rospy.logwarn('blablablabla')
 
 
     def main_loop(self):
@@ -338,9 +346,13 @@ class ODriveNode(object):
                                 self.doStuff = True
                                 self.axis_eng.data = True
                                 self.prev_axis = True
+                                rospy.logwarn(self.prev_axis)
+
                                 rospy.logwarn(self.axis_eng.data)
 
-                                self.axis_eng_pub.publish(self.axis_eng) 
+
+                                self.prev_axis_pub.publish(self.prev_axis)
+                                self.axis_eng_pub.publish(self.axis_eng) #publishes the topic okay
                                 rospy.logwarn(self.axis_eng)
                                 
                                 
