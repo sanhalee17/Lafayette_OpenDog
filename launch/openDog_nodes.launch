@@ -82,22 +82,22 @@
 
     <node pkg ="odrive_ros" type="new_foot_path.py" name="pub_foot_path_1">
         <param name = "foot_position" value = "/footPosition_1"/>
-        <param name = "phase_shift" value = "0"/>
+        <param name = "phase_shift" value = '0'/>
     </node>
 
     <node pkg ="odrive_ros" type="new_foot_path.py" name="pub_foot_path_2">
         <param name = "foot_position" value = "/footPosition_2"/>
-        <param name = "phase_shift" value = "pi/4"/>
+        <param name = "phase_shift" value = '0.785398'/>
     </node>
 
     <node pkg ="odrive_ros" type="new_foot_path.py" name="pub_foot_path_3">
         <param name = "foot_position" value = "/footPosition_3"/>
-        <param name = "phase_shift" value = "3*pi/4"/>
+        <param name = "phase_shift" value = '2.356194'/>
     </node>
 
     <node pkg ="odrive_ros" type="new_foot_path.py" name="pub_foot_path_4">
         <param name = "foot_position" value = "/footPosition_4"/>
-        <param name = "phase_shift" value = "pi/2"/>
+        <param name = "phase_shift" value = '1.570796'/>
     </node>
 
 
