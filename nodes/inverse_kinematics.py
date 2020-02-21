@@ -41,6 +41,11 @@ class InverseKinematics:
 		self.theta_HKP_shift = -1*(pi/180)    #8-1.5#1# offset angle, between knee-foot (KP) line and knee-tibia link connection (KL) line
 		self.theta_H = 10.3*(pi/180)         #10.3 #15.4 # 16.9 # offset angle, between x-axis and hip constraint (HL)
 		self.theta_t_shift = 14*(pi/180)   #21.3-7.3 #15.8# offset angle, between knee-tibia ball nut (KN) line and knee-hip (KH) line
+		#hip realted values, added by SL Feb.21.2020
+		self.length_h = 4.5      #inches, from the center of leg(from the front view) to the center of hip bearing
+		self.length_hbrv = 5     #inches, vertical length from hip bearing to actuator rod joint
+		self.length_rte = 1      #inches, horizontal length from actuator rod joint to left end of 40*40 extrusion
+
 
 		# Range of Motion
 		# self.R = 27.6236  # Farthest reach of foot (P) relative to hip, empirical
@@ -50,6 +55,11 @@ class InverseKinematics:
 		self.theta_max_E = 124*(pi/180) #119.29   # largest angle from x-axis to HP when tibia is fully extended
 		self.theta_min_C = 4.0002*(pi/180)	  # smallest angle from x-axis to HP when tibia is fully contracted (folded)
 		self.theta_max_C = 71.1922*(pi/180)   # largest angle from x-axis to HP when tibia is fully contracted (folded)
+
+		#here, need to add hip range of motion 
+		self.theta_min_H = 1111     #something change this value in the future
+		self.theta_max_H = 111111   #also change this 
+
 		#if you need parameters, use the following
 		#self.mything = rospy.get_param('param_name',default_value)
 
@@ -80,6 +90,11 @@ class InverseKinematics:
 		self.theta_P = None    # angle from foot position to x-axis (positive angle, towards negative x-axis)
 		self.theta_K = None    # angle from foot (P) to knee pivot (between the lines HP and HK)
 		self.theta_HKP = None  # angle from femur (upper leg) to tibia (lower leg) (between lines HK and KP)
+
+		#added by SL Feb.21.2020
+		self.h_d = None        # distance from hip bearing center to a foot
+		self.theta_hij = None  # angle from hip bearing center to hip actuator rod joint
+
 		# Goal:
 		self.theta_f = None    # angle of femur, from femur ball screw to hip constraint
 		self.theta_t = None    # angle of tibia, from tibia ball screw to knee constraint
@@ -127,8 +142,9 @@ class InverseKinematics:
 			self.tibia.publish(self.theta_t)
 
 			#calculate desired angle of hip (nothing is calculated here as of 12/3/19. This is here to publish a dummy topic to use for developing the hip node)
-			self.theta_t = Float64()
+			self.theta_h = Float64()
 			self.hip.publish(self.theta_h)
+			print("theta_t: " + str(self.theta_h))
 			#rospy.logwarn(str(self.theta_t) + ', ' + str(self.theta_f))
 
 
@@ -146,4 +162,3 @@ def main(args):
 
 if __name__=='__main__':
 	main(sys.argv)
-
