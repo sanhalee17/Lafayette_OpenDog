@@ -56,9 +56,9 @@ class InverseKinematics:
 		self.theta_min_C = 4.0002*(pi/180)	  # smallest angle from x-axis to HP when tibia is fully contracted (folded)
 		self.theta_max_C = 71.1922*(pi/180)   # largest angle from x-axis to HP when tibia is fully contracted (folded)
 
-		#here, need to add hip range of motion 
+		#here, need to add hip range of motion
 		self.theta_min_H = 1111     #something change this value in the future
-		self.theta_max_H = 111111   #also change this 
+		self.theta_max_H = 111111   #also change this
 
 		#if you need parameters, use the following
 		#self.mything = rospy.get_param('param_name',default_value)
@@ -81,7 +81,7 @@ class InverseKinematics:
 		self.tibia = rospy.Publisher(self.theta_t, Float64, queue_size = 1)
 		self.hip = rospy.Publisher(self.theta_h, Float64, queue_size = 1)
 
-
+hip node 
 
 
 
