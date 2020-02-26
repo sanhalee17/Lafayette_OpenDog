@@ -81,7 +81,7 @@ class InverseKinematics:
 		self.tibia = rospy.Publisher(self.theta_t, Float64, queue_size = 1)
 		self.hip = rospy.Publisher(self.theta_h, Float64, queue_size = 1)
 
-hip node 
+
 
 
 
