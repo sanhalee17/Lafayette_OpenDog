@@ -5,6 +5,9 @@
 # This python script takes a given position of the foot (with respect to the hip)...
 # ...and finds the angles of the upper and lower leg (femur and tibia) required to achieve that position.
 
+#Co-author: Sanha Lee, Feb. 2020
+#Modified original 2D IK node into 3D node
+
 #basics
 import rospy
 import sys
@@ -51,14 +54,18 @@ class InverseKinematics:
 		# self.R = 27.6236  # Farthest reach of foot (P) relative to hip, empirical
 		self.R = 27.375   	# Farthest reach of foot (P) relative to hip, sum of length_f and length_t
 		self.r = 17.9904    # Closest reach of foot (P) relative to hip, empirical
+		#hip range of Motion
+		#self.hip_max = something #farthest hip poisition toward positive z direction
+		#self.hip_min = something #farthest hip position toward negative z direction
+
 		self.theta_min_E = 39.91*(pi/180)     # smallest angle from x-axis to hip-foot (HP) line when tibia is fully extended
 		self.theta_max_E = 124*(pi/180) #119.29   # largest angle from x-axis to HP when tibia is fully extended
 		self.theta_min_C = 4.0002*(pi/180)	  # smallest angle from x-axis to HP when tibia is fully contracted (folded)
 		self.theta_max_C = 71.1922*(pi/180)   # largest angle from x-axis to HP when tibia is fully contracted (folded)
 
 		#here, need to add hip range of motion
-		self.theta_min_H = 1111     #something change this value in the future
-		self.theta_max_H = 111111   #also change this
+		#self.theta_min_H = 1111     #something change this value in the future
+		#self.theta_max_H = 111111   #also change this
 
 		#if you need parameters, use the following
 		#self.mything = rospy.get_param('param_name',default_value)
@@ -140,9 +147,15 @@ class InverseKinematics:
 			self.theta_t = self.theta_HKP - self.theta_HKP_shift - self.theta_t_shift
 			print("theta_t: " + str(self.theta_t))
 			self.tibia.publish(self.theta_t)
-
+		if (self.h_d > self.hip_max):
+			print("too far in + z direction")
+		elif (self.h_d < self.hip_min):
+			print("too far in - z direction")
+		else:
 			#calculate desired angle of hip (nothing is calculated here as of 12/3/19. This is here to publish a dummy topic to use for developing the hip node)
 			self.theta_h = Float64()
+			self.theta_hij = arctan(1/5)
+			self.theta_h = arcsin(data.pose.position.y / sqrt(data.pose.position.y**2 + (self.length_h + data.pose.position.z)**2)) + self.theta_hij
 			self.hip.publish(self.theta_h)
 			print("theta_t: " + str(self.theta_h))
 			#rospy.logwarn(str(self.theta_t) + ', ' + str(self.theta_f))
