@@ -7,7 +7,6 @@
 
 #Co-author: Sanha Lee, Feb. 2020
 #Modified original 2D IK node into 3D node
-
 #basics
 import rospy
 import sys
