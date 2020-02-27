@@ -54,8 +54,8 @@ class InverseKinematics:
 		self.R = 27.375   	# Farthest reach of foot (P) relative to hip, sum of length_f and length_t
 		self.r = 17.9904    # Closest reach of foot (P) relative to hip, empirical
 		#hip range of Motion
-		#self.hip_max = something #farthest hip poisition toward positive z direction
-		#self.hip_min = something #farthest hip position toward negative z direction
+		self.hip_max = 100 #farthest hip poisition toward positive z direction CHANGE THIS PLZ
+		self.hip_min = -100 #farthest hip position toward negative z direction CHANGE THIS PLZ
 
 		self.theta_min_E = 39.91*(pi/180)     # smallest angle from x-axis to hip-foot (HP) line when tibia is fully extended
 		self.theta_max_E = 124*(pi/180) #119.29   # largest angle from x-axis to HP when tibia is fully extended

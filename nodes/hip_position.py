@@ -25,13 +25,12 @@ import Queue   # might not be needed
 class HipPosition:
 	def __init__(self):
 		self.theta1_h = rospy.get_param('~hip1_angle', "/theta_h_1")
-		self.theat2_h = rospy.get_param('~hip2_angle', "/theta_h_2")
-		# self.theta2_h = rospy.get_param('~hip2_angle', "/theta_h_2")
+		self.theta2_h = rospy.get_param('~hip2_angle', "/theta_h_2")
 		self.position_command = rospy.get_param('~position_command', "/cmd_pos5")
 
 
 		self.sub1_H = rospy.Subscriber(self.theta1_h, Float64, self.hip1_pos_callback)
-		# self.sub2_H = rospy.Subscriber(self.theta2_h, Float64, self.hip2_pos_callback)
+		self.sub2_H = rospy.Subscriber(self.theta2_h, Float64, self.hip2_pos_callback)
 
 
 		self.pub = rospy.Publisher(self.position_command, Pose, queue_size = 1)
@@ -55,7 +54,7 @@ class HipPosition:
 				# Calculations will not continue if theta_f does not have a value
 				if(self.theta1_h is not None):
 					print("Received theta_h!")
-					self.bs_l = math.sin(self.theta_h) * self.hip_link_dist
+					self.bs_l = math.sin(self.theta1_h) * self.hip_link_dist
 
 					# Check: Make sure the ball nut will not crash into either ball screw mount
 					if(self.bs_l < self.min_H):
@@ -93,7 +92,7 @@ class HipPosition:
 	def hip2_pos_callback(self, data):
 			# Femur angle is calculated from Inverse Kinematics code, zero is when the hip is tucked
 			self.theta2_h = data.data
-			print(self.theta_h)
+			print(self.theta2_h)
 
 			# Calculations will not continue if no init_motor_f does not have a value
 			if(self.init_motor_h is not None):

@@ -67,8 +67,8 @@
     </node>
 
     <node pkg="odrive_ros" type="hip_position.py" name="hip_position_2">
-        <param name = "hip3_angle" value = "/theta_h_3"/>
-        <param name = "hip4_angle" value = "/theta_h_4"/>
+        <param name = "hip1_angle" value = "/theta_h_3"/>
+        <param name = "hip2_angle" value = "/theta_h_4"/>
         <param name = "position_command" value = "/cmd_pos6"/>
     </node>
 
