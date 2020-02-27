@@ -37,8 +37,7 @@
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg1_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
-        <param name="odrive_serial"      value="3365314F3536"/> <!-- odrive 1 serial=3363314C3536 -->
-
+        <param name="odrive_serial"      value="3365314F3536"/> 
         <!-- <param name = "lim1low_topic" value = "odrive/odrive1_low_tib"/> -->
         <!-- <param name = "lim1high_topic" value = "odrive/odrive1_high_tib"/> -->
         <!-- <param name = "lim2low_topic"  value = "odrive/odrive1_low_fem"/> -->
@@ -126,7 +125,7 @@
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg4_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
-        <param name="odrive_serial"      value="3352314C3536"/>
+        
 
         <param name = "lim1low_topic" value = "odrive/odrive4_low_tib"/>
         <param name = "lim1high_topic" value = "odrive/odrive4_high_tib"/>
