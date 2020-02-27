@@ -25,6 +25,7 @@ import Queue   # might not be needed
 class HipPosition:
 	def __init__(self):
 		self.theta1_h = rospy.get_param('~hip1_angle', "/theta_h_1")
+		self.theat2_h = rospy.get_param('~hip2_angle', "/theta_h_2")
 		# self.theta2_h = rospy.get_param('~hip2_angle', "/theta_h_2")
 		self.position_command = rospy.get_param('~position_command', "/cmd_pos5")
 
@@ -39,32 +40,32 @@ class HipPosition:
 		self.rev_to_count = 8192
 		self.deg_to_count = 8192 / 360   # 1 revolution = 360 degrees = 8192 counts
 		self.bs_l = 0 #length of ball screw actuator. starts at 0
-		self.bs_l_per_motor_rotate = 0.00256 #amount the ball screw 
+		self.bs_l_per_motor_rotate = 0.00256 #amount the ball screw
 		self.max_H = 0.02141
 		self.min_H = -0.04642
-		
+
 
 	def hip1_pos_callback(self, data):
-			
-			self.theta_h = data.data -90
-			print(self.theta_h)
 
-			
+			self.theta1_h = data.data -90
+			print(self.theta1_h)
+
+
 			if(self.init_motor_h is not None):
 				# Calculations will not continue if theta_f does not have a value
-				if(self.theta_h is not None):
+				if(self.theta1_h is not None):
 					print("Received theta_h!")
 					self.bs_l = math.sin(self.theta_h) * self.hip_link_dist
 
 					# Check: Make sure the ball nut will not crash into either ball screw mount
-					if(self.bs_l < self.min_H): 
-						# If less than minimum spacing between ball nut and H, 
+					if(self.bs_l < self.min_H):
+						# If less than minimum spacing between ball nut and H,
 						# ball nut will crash into upper ball screw mount...
 						# ...so reset value to maximum ball nut position (relative to lower mount.)
 						print("hip ball nut can't go that far! Resetting to maximum position...")
-						self.bs_l= self.min_H 
+						self.bs_l= self.min_H
 					elif(self.bs_l > self.max_H):
-						# If less than maximum spacing between ball nut and H, 
+						# If less than maximum spacing between ball nut and H,
 						# ball nut will crash into lower ball screw mount...
 						# ...so reset value to minimum ball nut position (relative to lower mount).
 						print("hip ball nut can't go that far! Resetting to minimum position...")
@@ -72,7 +73,7 @@ class HipPosition:
 					else:
 						# If in between these two extremes, do nothing.  Everything should be fine!
 						pass
-					
+
 
 					self.des_pos1_h = self.bs_l/self.bs_l_per_motor_rotate * self.rev_to_count
  					hip_pos1 = Pose()
@@ -90,26 +91,26 @@ class HipPosition:
 			else:
 				pass
 	def hip2_pos_callback(self, data):
-			# Femur angle is calculated from Inverse Kinematics code, zero is when the hip is tucked 
-			self.theta_h = data.data 
+			# Femur angle is calculated from Inverse Kinematics code, zero is when the hip is tucked
+			self.theta2_h = data.data
 			print(self.theta_h)
 
-			# Calculations will not continue if no init_motor_f does not have a value 
+			# Calculations will not continue if no init_motor_f does not have a value
 			if(self.init_motor_h is not None):
 				# Calculations will not continue if theta_f does not have a value
-				if(self.theta_h is not None):
+				if(self.theta2_h is not None):
 					print("Received theta_h!")
-					
+
 
 					# Check: Make sure the ball nut will not crash into either ball screw mount
 					if(self.length_HBN < self.min_H):
-						# If less than minimum spacing between ball nut and H, 
+						# If less than minimum spacing between ball nut and H,
 						# ball nut will crash into upper ball screw mount...
 						# ...so reset value to maximum ball nut position (relative to lower mount.)
 						print("Femur ball nut can't go that far! Resetting to maximum position...")
-						self.length_HBN = self.min_H   
+						self.length_HBN = self.min_H
 					elif(self.length_HBN > (self.ball_screw_H + self.mount_H)):
-						# If less than maximum spacing between ball nut and H, 
+						# If less than maximum spacing between ball nut and H,
 						# ball nut will crash into lower ball screw mount...
 						# ...so reset value to minimum ball nut position (relative to lower mount).
 						print("Femur ball nut can't go that far! Resetting to minimum position...")
@@ -124,10 +125,10 @@ class HipPosition:
 					# ...to find desired ball nut location, as well as the total length of the screw
 					self.des_BN_f = self.ball_screw_H + self.mount_H - (self.length_HBN)
 					print("BN_f = "+ str(self.des_BN_f))
-					
 
 
-				
+
+
 					self.delta_motor_h = - self.des_BN_f * self.distance_to_motor_pos
 
 					self.des_pos2_h = self.delta_motor_f #+ self.last_pos_f
