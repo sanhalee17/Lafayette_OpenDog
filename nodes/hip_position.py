@@ -35,20 +35,21 @@ class HipPosition:
 
 		self.pub = rospy.Publisher(self.position_command, Pose, queue_size = 1)
 		self.init_motor_h = 0
-		self.hip_link_dist = 0.1395 #distance from hip joint to link in meters
+		self.hip_link_dist = 5.625 #distance from hip joint to link in inches
 		self.rev_to_count = 8192
 		self.deg_to_count = 8192 / 360   # 1 revolution = 360 degrees = 8192 counts
 		self.bs_l = 0 #length of ball screw actuator. starts at 0
 		self.bs_l_per_motor_rotate = 0.00256 #amount the ball screw 
 		self.max_H = 0.02141
 		self.min_H = -0.04642
+		
 
 	def hip1_pos_callback(self, data):
-			# Femur angle is calculated from Inverse Kinematics code, zero is when the hip is tucked 
+			
 			self.theta_h = data.data -90
 			print(self.theta_h)
 
-			# Calculations will not continue if no init_motor_f does not have a value 
+			
 			if(self.init_motor_h is not None):
 				# Calculations will not continue if theta_f does not have a value
 				if(self.theta_h is not None):
@@ -88,62 +89,62 @@ class HipPosition:
 					pass
 			else:
 				pass
-	# def hip2_pos_callback(self, data):
-	# 		# Femur angle is calculated from Inverse Kinematics code, zero is when the hip is tucked 
-	# 		self.theta_h = data.data 
-	# 		print(self.theta_h)
+	def hip2_pos_callback(self, data):
+			# Femur angle is calculated from Inverse Kinematics code, zero is when the hip is tucked 
+			self.theta_h = data.data 
+			print(self.theta_h)
 
-	# 		# Calculations will not continue if no init_motor_f does not have a value 
-	# 		if(self.init_motor_h is not None):
-	# 			# Calculations will not continue if theta_f does not have a value
-	# 			if(self.theta_h is not None):
-	# 				print("Received theta_h!")
+			# Calculations will not continue if no init_motor_f does not have a value 
+			if(self.init_motor_h is not None):
+				# Calculations will not continue if theta_f does not have a value
+				if(self.theta_h is not None):
+					print("Received theta_h!")
 					
 
-	# 				# Check: Make sure the ball nut will not crash into either ball screw mount
-	# 				if(self.length_HBN < self.min_H):
-	# 					# If less than minimum spacing between ball nut and H, 
-	# 					# ball nut will crash into upper ball screw mount...
-	# 					# ...so reset value to maximum ball nut position (relative to lower mount.)
-	# 					print("Femur ball nut can't go that far! Resetting to maximum position...")
-	# 					self.length_HBN = self.min_H   
-	# 				elif(self.length_HBN > (self.ball_screw_H + self.mount_H)):
-	# 					# If less than maximum spacing between ball nut and H, 
-	# 					# ball nut will crash into lower ball screw mount...
-	# 					# ...so reset value to minimum ball nut position (relative to lower mount).
-	# 					print("Femur ball nut can't go that far! Resetting to minimum position...")
-	# 					self.length_HBN = self.ball_screw_H + self.mount_H
-	# 				else:
-	# 					# If in between these two extremes, do nothing.  Everything should be fine!
-	# 					pass
+					# Check: Make sure the ball nut will not crash into either ball screw mount
+					if(self.length_HBN < self.min_H):
+						# If less than minimum spacing between ball nut and H, 
+						# ball nut will crash into upper ball screw mount...
+						# ...so reset value to maximum ball nut position (relative to lower mount.)
+						print("Femur ball nut can't go that far! Resetting to maximum position...")
+						self.length_HBN = self.min_H   
+					elif(self.length_HBN > (self.ball_screw_H + self.mount_H)):
+						# If less than maximum spacing between ball nut and H, 
+						# ball nut will crash into lower ball screw mount...
+						# ...so reset value to minimum ball nut position (relative to lower mount).
+						print("Femur ball nut can't go that far! Resetting to minimum position...")
+						self.length_HBN = self.ball_screw_H + self.mount_H
+					else:
+						# If in between these two extremes, do nothing.  Everything should be fine!
+						pass
 
 
-	# 				# desired change in length (should be positive) of the ball screw
-	# 				# Take the distance between the knee and the nearest ball screw mount into account...
-	# 				# ...to find desired ball nut location, as well as the total length of the screw
-	# 				self.des_BN_f = self.ball_screw_H + self.mount_H - (self.length_HBN)
-	# 				print("BN_f = "+ str(self.des_BN_f))
+					# desired change in length (should be positive) of the ball screw
+					# Take the distance between the knee and the nearest ball screw mount into account...
+					# ...to find desired ball nut location, as well as the total length of the screw
+					self.des_BN_f = self.ball_screw_H + self.mount_H - (self.length_HBN)
+					print("BN_f = "+ str(self.des_BN_f))
 					
 
 
 				
-	# 				self.delta_motor_h = - self.des_BN_f * self.distance_to_motor_pos
+					self.delta_motor_h = - self.des_BN_f * self.distance_to_motor_pos
 
-	# 				self.des_pos2_h = self.delta_motor_f #+ self.last_pos_f
-	# 				hip.pos2 = Pose()
-	# 				hip_pos2.position.x = 0.0
-	# 				hip_pos2.position.y = 0.0
-	# 				hip_pos2.position.z = self.des_pos2_h
-	# 				hip_pos2.orientation.x = 0.0
-	# 				hip_pos2.orientation.y = 0.0
-	# 				hip_pos2.orientation.z = 0.0
-	# 				hip_pos2.orientation.w = 0.0
-	# 				self.pub.publish(hip_pos2)
+					self.des_pos2_h = self.delta_motor_f #+ self.last_pos_f
+					hip.pos2 = Pose()
+					hip_pos2.position.x = 0.0
+					hip_pos2.position.y = 0.0
+					hip_pos2.position.z = self.des_pos2_h
+					hip_pos2.orientation.x = 0.0
+					hip_pos2.orientation.y = 0.0
+					hip_pos2.orientation.z = 0.0
+					hip_pos2.orientation.w = 0.0
+					self.pub.publish(hip_pos2)
 
 
-	# 				pass
-	# 		else:
-	# 			pass
+					pass
+			else:
+				pass
 def main(args):
 	rospy.init_node('hip_position',anonymous=True)
 	HP = HipPosition()
