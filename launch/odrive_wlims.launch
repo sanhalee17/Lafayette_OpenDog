@@ -2,38 +2,38 @@
 <launch>
     <arg name="connect_on_startup"   default="true"/>
     <arg name="calibrate_on_startup" default="true"/>
-    <arg name="engage_on_startup"    default="true"/> 
+    <arg name="engage_on_startup"    default="true"/>
 
     <!--Edit by GGC on July 3 -->
     <arg name="control_mode"   default="position"/>
 
     <arg name="publish_odom"   default="true"/>
     <arg name="publish_tf"     default="false"/>
-    
+
     <arg name="output"   default="screen"/>
     <arg name="respawn"   default="false"/>
-    <arg name="node_start_delay" default="1.0" />  
+    <arg name="node_start_delay" default="1.0" />
     <!-- <node name="listener" pkg="roscpp_tutorials" type="listener" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " /> -->
 
-    
+
 
 
 
 
     <!-- odrive 1 -->
-    <node pkg="odrive_ros" type="odrive_node" name="odrive1" ns = "odrive1"  
+    <node pkg="odrive_ros" type="odrive_node" name="odrive1" ns = "odrive1"
             output="$(arg output)" respawn="$(arg respawn)"
             launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' ">
         <param name="wheel_track" value="0.285"/>
         <param name="tyre_circumference" value="0.341"/>
         <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
-        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> 
-        <param name="engage_on_startup"    value="$(arg engage_on_startup)"/> 
+        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/>
+        <param name="engage_on_startup"    value="$(arg engage_on_startup)"/>
 
 
-  
+
         <param name="control_mode"    value="$(arg control_mode)"/>
-        
+
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg1_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
@@ -45,26 +45,26 @@
         <!-- <param name = "lim2high_topic" value = "odrive/odrive1_high_fem"/> -->
         <param name = "previous_axis" value = "odrive/previous_axis1"/>
         <param name = "axis_engage" value = "/odrive1/odrive1/motor_engage"/>
-    
+
 
         <param name = "pos_cmd_topic" value = "/cmd_pos1"/>
         <!-- <param name = "hip_cmd_topic" value = "0"/> -->
     </node>
- 
+
     <!-- odrive 2 -->
     <node pkg="odrive_ros" type="odrive_node" name="odrive2" ns = "odrive2"
             output="$(arg output)" respawn="$(arg respawn)"
             launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' ">
         <param name="wheel_track" value="0.285"/>
         <param name="tyre_circumference" value="0.341"/>
-        
-        <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
-        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> 
-        <param name="engage_on_startup"    value="$(arg engage_on_startup)"/> 
 
-        
+        <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
+        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/>
+        <param name="engage_on_startup"    value="$(arg engage_on_startup)"/>
+
+
         <param name="control_mode"    value="$(arg control_mode)"/>
-        
+
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg2_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
@@ -87,13 +87,13 @@
             launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' ">
         <param name="wheel_track" value="0.285"/>
         <param name="tyre_circumference" value="0.341"/>
-        
+
         <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
-        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> 
-        <param name="engage_on_startup"    value="$(arg engage_on_startup)"/> 
+        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/>
+        <param name="engage_on_startup"    value="$(arg engage_on_startup)"/>
 
         <param name="control_mode"    value="$(arg control_mode)"/>
-        
+
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg3_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
@@ -109,20 +109,20 @@
         <param name = "pos_cmd_topic" value = "/cmd_pos3"/>
     </node>
 
-    <!-- odrive 4 --> 
+    <!-- odrive 4 -->
     <node pkg="odrive_ros" type="odrive_node" name="odrive4" ns = "odrive4"
             output="$(arg output)" respawn="$(arg respawn)"
             launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' ">
         <param name="wheel_track" value="0.285"/>
         <param name="tyre_circumference" value="0.341"/>
-        
-        <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
-        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> 
-        <param name="engage_on_startup"    value="$(arg engage_on_startup)"/> 
 
-        
+        <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
+        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/>
+        <param name="engage_on_startup"    value="$(arg engage_on_startup)"/>
+
+
         <param name="control_mode"    value="$(arg control_mode)"/>
-        
+
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg4_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
@@ -139,18 +139,18 @@
     </node>
 
    <!-- odrive 5 -->
-    <!-- <node pkg="odrive_ros" type="odrive_node" name="odrive5" ns = "odrive5"
+    <node pkg="odrive_ros" type="odrive_node" name="odrive5" ns = "odrive5"
             output="$(arg output)" respawn="$(arg respawn)">
         <param name="wheel_track" value="0.285"/>
         <param name="tyre_circumference" value="0.341"/>
-        
+
         <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
-        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> 
+        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/>
         <param name="engage_on_startup"    value="$(arg engage_on_startup)"/>  -->
 
         <!--Edit by GGC on July 3 -->
-      <!--   <param name="control_mode"    value="$(arg control_mode)"/>
-        
+        <param name="control_mode"    value="$(arg control_mode)"/>
+
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg5_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
@@ -162,22 +162,22 @@
         <param name = "lim2high_topic" value = "odrive/odrive5_high_fem"/>
 
         <param name = "hip_cmd_topic1" value = "/cmd_pos5"/>
-        <param name = "hip_cmd_topic2" value = "/cmd_pos6"/>
-    </node>  -->
+
+    </node>
 
     <!-- odrive 6 -->
-   <!--  <node pkg="odrive_ros" type="odrive_node" name="odrive6" ns = "odrive6"
+    <node pkg="odrive_ros" type="odrive_node" name="odrive6" ns = "odrive6"
             output="$(arg output)" respawn="$(arg respawn)">
         <param name="wheel_track" value="0.285"/>
         <param name="tyre_circumference" value="0.341"/>
-        
-        <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
-        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/> 
-        <param name="engage_on_startup"    value="$(arg engage_on_startup)"/> 
 
-        
+        <param name="connect_on_startup"   value="$(arg connect_on_startup)"/>
+        <param name="calibrate_on_startup" value="$(arg calibrate_on_startup)"/>
+        <param name="engage_on_startup"    value="$(arg engage_on_startup)"/>
+
+
         <param name="control_mode"    value="$(arg control_mode)"/>
-        
+
         <param name="publish_odom"    value="$(arg publish_odom)"/>
         <param name = "odom_topic" value = "leg6_odom"/>
         <param name="publish_tf"      value="$(arg publish_tf)"/>
@@ -188,22 +188,22 @@
         <param name = "lim2low_topic"  value = "odrive/odrive6_low_fem"/>
         <param name = "lim2high_topic" value = "odrive/odrive6_high_fem"/>
 
-        <param name = "hip_cmd_topic1" value = "/cmd_pos7"/>
-        <param name = "hip_cmd_topic2" value = "/cmd_pos8"/> 
+        <param name = "hip_cmd_topic1" value = "/cmd_pos6"/>
 
-     
-    </node> -->
+
+
+    </node>
 
     <!-- Edit by SL on Nov. 13 -->
  <!--    <node pkg="odrive_ros" type="odrive_interface" name="odrive" ns="odrive"
         output="$(arg output)" respawn="$(arg respawn)"  -->
-    
+
     <!-- Edit by SL on Nov.26 -->
     <node pkg="rqt_ez_publisher" type="rqt_ez_publisher" name="rqt_ez_publisher" output="screen"/>
 
-    
 
-    
+
+
 
     <!-- <node pkg="rosserial_python" type="serial_node.py" name="limit_switch_arduino" args="/dev/ttyACM0"/> -->
 
