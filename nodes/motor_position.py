@@ -328,7 +328,8 @@ class MotorPosition:
 				# desired change in length (should be positive) of the ball screw
 				# Take the distance between the knee and the nearest ball screw mount into account...
 				# ...to find desired ball nut location, as well as the total length of the screw
-				self.des_BN_f = self.ball_screw_H + self.mount_H - (self.length_HBN)
+				self.des_BN_f = -(self.ball_screw_H + self.mount_H - (self.length_HBN))
+				#switched self.des_BN_f sign to negative ; Feb.16.2020 
 				print("BN_f = "+ str(self.des_BN_f))
 				
 
