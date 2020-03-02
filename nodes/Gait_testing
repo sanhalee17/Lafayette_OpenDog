@@ -29,19 +29,32 @@ class FootPath:
 
 		# define parameters for sinusoidal path
 
+		#parameters for forward walking gait
 		self.leg_pace = 2.0 # pace of gait
+		self.x_center_foward = -0.5
+		self.x_stride_forward = -4.0
+		self.y_center_forward = 25.0
+		self.y_lift_forward = 3.0
 
-		#self.gait_sub = rospy.Subscriber('/gait_params', Array, self.gait_callback)
 
-		self.x_center = -0.5
-		self.x_stride = -4.0
+		self.x_center_foward = -0.5
+		self.x_stride_forward = -4.0
+		self.y_center_forward = 25.0
+		self.y_lift_forward = 3.0
 
-		self.y_center = 25.0
-		self.y_lift = 3.0
+		self.x_center_foward = -0.5
+		self.x_stride_forward = -4.0
+		self.y_center_forward = 25.0
+		self.y_lift_forward = 3.0
 
+		self.x_center_foward = -0.5
+		self.x_stride_forward = -4.0
+		self.y_center_forward = 25.0
+		self.y_lift_forward = 3.0
 
 		# Initialize "current" values
 		self.ynow,self.tnow = 0.0, 0.0
+		self.xnow,self.znow = 0.0, 0.0
 
 
 		# Set up a publisher
@@ -57,7 +70,7 @@ class FootPath:
 		rospy.Service('Down', std_srvs.srv.Trigger, self.Down)
 
 
-	def self.Forward_walking(self, data, request):
+	def Forward_walking(self, data, request):
 		try:
 			#what is the time now?
 			# self.tnow = rospy.Time.now()
@@ -93,7 +106,7 @@ class FootPath:
 			#break
 			pass
 
-	def self.Turn(self, data, request):
+	def Turn(self, data, request):
 		try:
 			self.tnow = time.time()
 			self.xnow = self.x_center + self.x_stride*sin(self.leg_pace*self.tnow - pi/2 - leg1_offset)
@@ -111,7 +124,7 @@ class FootPath:
 			footPosition.pose.orientation.w = 0.0
 			self.pub.publish(footPosition)
 
-	def self.Swivel(self, data, request):
+	def Swivel(self, data, request):
 		try:
 			self.tnow = time.time()
 			self.xnow = self.x_center + self.x_stride*sin(self.leg_pace*self.time - pi/2 - leg1_offset)
@@ -129,11 +142,12 @@ class FootPath:
 			footPosition.pose.orientation.w = 0.0
 			self.pub.publish(footPosition)
 
-	def self.Side_walk(self, data, request):
+	def Side_walk(self, data, request):
 		try:
-			self.xnow = self.x_center + self.x_stride*sin(self.leg_pace*t[i] - pi/2 - leg1_offset)
-			self.ynow = self.y_center + self.y_offset*sin(self.leg_pace*t[i] - pi - leg1_offset)
-			self.znow = self.z_center + self.z_lift*sin(self.leg_pace*t[i] - pi/2 - leg1_offset)
+			tnow = time.time()
+			self.xnow = self.x_center + self.x_stride*sin(self.leg_pace*tnow - pi/2 - leg1_offset)
+			self.ynow = self.y_center + self.y_offset*sin(self.leg_pace*tnow - pi - leg1_offset)
+			self.znow = self.z_center + self.z_lift*sin(self.leg_pace*tnow - pi/2 - leg1_offset)
 
 			footPosition = PoseStamped()
 			footPosition.header.stamp = rospy.Time.now()
