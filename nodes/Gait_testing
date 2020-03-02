@@ -37,20 +37,20 @@ class FootPath:
 		self.y_lift_forward = 3.0
 
 
-		self.x_center_foward = -0.5
-		self.x_stride_forward = -4.0
-		self.y_center_forward = 25.0
-		self.y_lift_forward = 3.0
+		self.x_center_turn = -0.5
+		self.x_stride_turn = -4.0
+		self.y_center_turn = 25.0
+		self.y_lift_turn = 3.0
 
-		self.x_center_foward = -0.5
-		self.x_stride_forward = -4.0
-		self.y_center_forward = 25.0
-		self.y_lift_forward = 3.0
+		self.x_center_swivel = -0.5
+		self.x_stride_swivel = -4.0
+		self.y_center_swivel = 25.0
+		self.y_lift_swivel = 3.0
 
-		self.x_center_foward = -0.5
-		self.x_stride_forward = -4.0
-		self.y_center_forward = 25.0
-		self.y_lift_forward = 3.0
+		self.x_center_side = -0.5
+		self.x_stride_side = -4.0
+		self.y_center_side = 25.0
+		self.y_lift_side = 3.0
 
 		# Initialize "current" values
 		self.ynow,self.tnow = 0.0, 0.0
