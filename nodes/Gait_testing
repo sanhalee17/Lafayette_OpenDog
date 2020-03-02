@@ -78,20 +78,20 @@ class FootPath:
 
 			# now where should the foot be?
 			# rospy.logwarn(self.x_center, self.x_stride, self.leg_pace, self.tnow, self.phase_shift)
-			self.xnow = -(self.x_center + self.x_stride*sin(self.leg_pace*self.tnow - self.phase_shift))
+			self.xnow_forward = -(self.x_center_forward + self.x_stride_forward*sin(self.leg_pace*self.tnow - self.phase_shift))
 			#rospy.logwarn(str(self.xnow) + ' , ' + str(self.ynow))
 
 
-			self.ynow = (self.y_center + self.y_lift*sin(self.leg_pace*self.tnow - self.phase_shift - pi/2))
+			self.ynow_forward= (self.y_center_forward + self.y_lift_forward*sin(self.leg_pace*self.tnow - self.phase_shift - pi/2))
 
-			if (self.ynow) > self.y_center: self.ynow = self.y_center
+			if (self.ynow_forward) > self.y_center_forward: self.ynow _forward =  self.y_center_forward
 
 			# Create and publish PoseStamped message containing the (x,y) position of the foot
 			# Eventually will include z when hip motion is included
 			footPosition = PoseStamped()
 			footPosition.header.stamp = rospy.Time.now()
-			footPosition.pose.position.x = self.xnow
-			footPosition.pose.position.y = self.ynow
+			footPosition.pose.position.x = self.xnow_forward
+			footPosition.pose.position.y = self.ynow_forward
 			footPosition.pose.position.z = 0.0
 			footPosition.pose.orientation.x = 0.0
 			footPosition.pose.orientation.y = 0.0
@@ -109,57 +109,70 @@ class FootPath:
 	def Turn(self, data, request):
 		try:
 			self.tnow = time.time()
-			self.xnow = self.x_center + self.x_stride*sin(self.leg_pace*self.tnow - pi/2 - leg1_offset)
-			self.ynow = self.y_center - self.y_offset*sin(self.leg_pace*self.tnow - pi - leg1_offset)
-			self.znow = self.z_center + self.z_lift*sin(self.leg_pace*self.tnow - pi/2 - leg1_offset)
+			self.xnow_turn = self.x_center_turn + self.x_stride_turn*sin(self.leg_pace*self.tnow - pi/2 - leg1_offset)
+			self.ynow_turn = self.y_center_turn - self.y_offset_turn*sin(self.leg_pace*self.tnow - pi - leg1_offset)
+			self.znow_turn = self.z_center_turn + self.z_lift_turn*sin(self.leg_pace*self.tnow - pi/2 - leg1_offset)
 
 			footPosition = PoseStamped()
 			footPosition.header.stamp = rospy.Time.now()
-			footPosition.pose.position.x = self.xnow
-			footPosition.pose.position.y = self.ynow
-			footPosition.pose.position.z = self.znow
+			footPosition.pose.position.x = self.xnow_turn
+			footPosition.pose.position.y = self.ynow_turn
+			footPosition.pose.position.z = self.znow_turn
 			footPosition.pose.orientation.x = 0.0
 			footPosition.pose.orientation.y = 0.0
 			footPosition.pose.orientation.z = 0.0
 			footPosition.pose.orientation.w = 0.0
 			self.pub.publish(footPosition)
+		except KeyboardInterrupt:
+			#close('all')
+			#break
+			pass
 
 	def Swivel(self, data, request):
 		try:
 			self.tnow = time.time()
-			self.xnow = self.x_center + self.x_stride*sin(self.leg_pace*self.time - pi/2 - leg1_offset)
-			self.ynow = self.y_center - self.y_offset*sin(self.leg_pace*self.time - pi - leg1_offset)
-			self.znow = self.z_center + self.z_lift*sin(self.leg_pace*self.time - pi/2 - leg1_offset)
+			self.xnow_swivel = self.x_center_swivel + self.x_stride_swivel*sin(self.leg_pace*self.time - pi/2 - leg1_offset)
+			self.ynow_swivel = self.y_center_swivel - self.y_offset_swivel*sin(self.leg_pace*self.time - pi - leg1_offset)
+			self.znow_swivel = self.z_center_swivel + self.z_lift_swivel*sin(self.leg_pace*self.time - pi/2 - leg1_offset)
 
 			footPosition = PoseStamped()
 			footPosition.header.stamp = rospy.Time.now()
-			footPosition.pose.position.x = self.xnow
-			footPosition.pose.position.y = self.ynow
-			footPosition.pose.position.z = self.znow
+			footPosition.pose.position.x = self.xnow_swivel
+			footPosition.pose.position.y = self.ynow_swivel
+			footPosition.pose.position.z = self.znow_swivel
 			footPosition.pose.orientation.x = 0.0
 			footPosition.pose.orientation.y = 0.0
 			footPosition.pose.orientation.z = 0.0
 			footPosition.pose.orientation.w = 0.0
 			self.pub.publish(footPosition)
+		except KeyboardInterrupt:
+			#close('all')
+			#break
+			pass
 
 	def Side_walk(self, data, request):
 		try:
 			tnow = time.time()
-			self.xnow = self.x_center + self.x_stride*sin(self.leg_pace*tnow - pi/2 - leg1_offset)
-			self.ynow = self.y_center + self.y_offset*sin(self.leg_pace*tnow - pi - leg1_offset)
-			self.znow = self.z_center + self.z_lift*sin(self.leg_pace*tnow - pi/2 - leg1_offset)
+			self.xnow_swivel = self.x_center_swivel + self.x_stride_swivel*sin(self.leg_pace*tnow - pi/2 - leg1_offset)
+			self.ynow_swivel = self.y_center_swivel + self.y_offset_swivel*sin(self.leg_pace*tnow - pi - leg1_offset)
+			self.znow_swivel = self.z_center_swivel + self.z_lift_swivel*sin(self.leg_pace*tnow - pi/2 - leg1_offset)
 
 			footPosition = PoseStamped()
 			footPosition.header.stamp = rospy.Time.now()
-			footPosition.pose.position.x = self.xnow
-			footPosition.pose.position.y = self.ynow
-			footPosition.pose.position.z = self.znow
+			footPosition.pose.position.x = self.xnow_swivel
+			footPosition.pose.position.y = self.ynow_swivel
+			footPosition.pose.position.z = self.znow_swivel
 			footPosition.pose.orientation.x = 0.0
 			footPosition.pose.orientation.y = 0.0
 			footPosition.pose.orientation.z = 0.0
 			footPosition.pose.orientation.w = 0.0
 
 			self.pub.publish(footPosition)
+			
+		except KeyboardInterrupt:
+			#close('all')
+			#break
+			pass
 
 
 def main(args):
