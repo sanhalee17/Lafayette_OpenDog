@@ -31,7 +31,7 @@ class FootPath:
 		self.leg_pace = 4 # pace of gait
 
 		#self.x_center = -0.5
-		self.x_stride = 4
+		self.x_stride = -4
 
 		#self.y_center = 25.0
 		self.y_lift = 4
@@ -53,7 +53,7 @@ class FootPath:
 			#what is the time now?
 			# self.tnow = rospy.Time.now()
 			self.tnow = time.time()
-		
+
 			# now where should the foot be?
 			# rospy.logw-rn(self.x_center, self.x_stride, self.leg_pace, self.tnow, self.phase_shift)
 			self.xnow =-(self.x_center + self.x_stride*sin(self.leg_pace*self.tnow - self.phase_shift))
@@ -65,7 +65,7 @@ class FootPath:
 
 			if (self.ynow) > self.y_center: #if lifting vauz
 				self.ynow = self.y_center
-			
+
 			#rospy.logwarn(str(self.tnow) + ', ' + str(self.ynow) + ', ' + str(self.xnow) )
 			# Create and publish PoseStamped message containing the (x,y) position of the foot
 			# Eventually will include z when hip motion is included
