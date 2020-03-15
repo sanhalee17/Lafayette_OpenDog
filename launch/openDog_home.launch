@@ -77,36 +77,36 @@
     <node pkg ="odrive_ros" type="new_foot_path.py" name="pub_foot_path_1">
         <param name = "foot_position" value = "/footPosition_1"/>
         <param name = "phase_shift" value = '0'/>
-        <param name = "y_center" value = '24'/>
-        <param name = "y_lift" value = '5.5'/>
-        <param name = "leg_pace" value = '2.0'/>
+        <param name = "y_center" value = '25'/>
+        <param name = "y_lift" value = '3'/>
+        <param name = "leg_pace" value = '0.0'/>
         <param name = "x_stride" value = '3.3'/>
     </node>
 
     <node pkg ="odrive_ros" type="new_foot_path.py" name="pub_foot_path_2">
         <param name = "foot_position" value = "/footPosition_2"/>
-        <param name = "phase_shift" value = '3.1415926'/>   <!-- '0.785398' -->
-        <param name = "y_center" value = '24'/>
-        <param name = "y_lift" value = '5.5'/>
-        <param name = "leg_pace" value = '2.0'/>
+        <param name = "phase_shift" value = '0'/>   <!-- '0.785398' -->
+        <param name = "y_center" value = '25'/>
+        <param name = "y_lift" value = '3'/>
+        <param name = "leg_pace" value = '0.0'/>
         <param name = "x_stride" value = '3.3'/>
     </node>
 
     <node pkg ="odrive_ros" type="new_foot_path.py" name="pub_foot_path_3">
         <param name = "foot_position" value = "/footPosition_3"/>
-        <param name = "phase_shift" value = '4.712389'/>    <!-- '2.356194'/> -->
-        <param name = "y_center" value = '24'/>
+        <param name = "phase_shift" value = '0'/>    <!-- '2.356194'/> -->
+        <param name = "y_center" value = '25'/>
         <param name = "y_lift" value = '3'/>
-        <param name = "leg_pace" value = '2.0'/>
+        <param name = "leg_pace" value = '0.0'/>
         <param name = "x_stride" value = '3.3'/>
     </node>
 
     <node pkg ="odrive_ros" type="new_foot_path.py" name="pub_foot_path_4">
         <param name = "foot_position" value = "/footPosition_4"/>
-        <param name = "phase_shift" value = '1.570796'/>      <!-- '1.570796'/> -->
-        <param name = "y_center" value = '24'/>
+        <param name = "phase_shift" value = '0'/>      <!-- '1.570796'/> -->
+        <param name = "y_center" value = '25'/>
         <param name = "y_lift" value = '3'/>
-        <param name = "leg_pace" value = '2.0'/>
+        <param name = "leg_pace" value = '0.0'/>
         <param name = "x_stride" value = '3.3'/>
     </node>
 
