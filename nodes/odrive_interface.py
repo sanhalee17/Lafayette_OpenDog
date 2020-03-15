@@ -351,7 +351,7 @@ class ODriveInterfaceAPI(object):
         # time.sleep(1)
         # self.axes[1].controller.pos_setpoint = 0
         self.current_state_1 = self.axes[1].current_state
-
+#leg1_odom
         # time.sleep(10)
 
         #added Nov.13.2019 by SL:

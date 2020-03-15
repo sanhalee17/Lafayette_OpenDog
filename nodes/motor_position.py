@@ -289,7 +289,7 @@ class MotorPosition:
 	def femur_motor_callback(self, data):
 		# Femur angle is calculated from Inverse Kinematics code, zero is when the hip is tucked 
 		self.theta_f = data.data 
-		print(self.theta_f)
+		print("theta_f = " + str(self.theta_f))
 
 		# Calculations will not continue if no init_motor_f does not have a value 
 		if(self.init_motor_t is not None and self.calibrated_f is True):
@@ -305,7 +305,7 @@ class MotorPosition:
 
 				#length from hip to ball nut
 				self.length_HBN = ((self.link_H * sin(self.theta_HLN)) / sin(self.theta_f))
-				print("HBN = "+ str(self.length_HBN)) 
+				#print("HBN = "+ str(self.length_HBN)) 
 
 				# Check: Make sure the ball nut will not crash into either ball screw mount
 				if(self.length_HBN < self.min_H):
@@ -313,12 +313,14 @@ class MotorPosition:
 					# ball nut will crash into upper ball screw mount...
 					# ...so reset value to maximum ball nut position (relative to lower mount.)
 					print("Femur ball nut can't go that far! Resetting to maximum position...")
+					rospy.logwarn("Femur ball nut can't go that far! Resetting to maximum position...")
 					self.length_HBN = self.min_H   
 				elif(self.length_HBN > (self.ball_screw_H + self.mount_H)):
 					# If less than maximum spacing between ball nut and H, 
 					# ball nut will crash into lower ball screw mount...
 					# ...so reset value to minimum ball nut position (relative to lower mount).
 					print("Femur ball nut can't go that far! Resetting to minimum position...")
+					rospy.logwarn("Femur ball nut can't go that far! Resetting to minimum position...")
 					self.length_HBN = self.ball_screw_H + self.mount_H
 				else:
 					# If in between these two extremes, do nothing.  Everything should be fine!
@@ -328,9 +330,10 @@ class MotorPosition:
 				# desired change in length (should be positive) of the ball screw
 				# Take the distance between the knee and the nearest ball screw mount into account...
 				# ...to find desired ball nut location, as well as the total length of the screw
-				self.des_BN_f = -(self.ball_screw_H + self.mount_H - (self.length_HBN))
+				self.des_BN_f = (self.ball_screw_H + self.mount_H - (self.length_HBN))
+				# Thus, zero is defined from mount near knee (March 8 2020)
 				#switched self.des_BN_f sign to negative ; Feb.16.2020 
-				print("BN_f = "+ str(self.des_BN_f))
+				print("des_BN_f = "+ str(self.des_BN_f))
 				
 
 				# # Check: Make sure the ball nut will not crash into either ball screw mount
@@ -380,7 +383,7 @@ class MotorPosition:
 			# Calculations will not continue if theta_f does not have a value
 			if(self.theta_t is not None):
 				#rospy.logwarn("enter tibia callback")
-				print("Received theta_f and theta_t!")
+				#print("Received theta_f and theta_t!")
 				
 				print("theta_t = " + str(self.theta_t))
 
@@ -420,6 +423,8 @@ class MotorPosition:
 				# ...to find desired ball nut location
 				#self.des_BN_t = self.length_KBN - self.mount_K  # original line
 				self.des_BN_t = self.length_KBN - self.min_K
+				# Changed home (zero) position to top mount (March 8,2020)
+				#self.des_BN_t = -(self.ball_screw_K + self.mount_K - self.length_KBN)
 				print("des_BN_t = " + str(self.des_BN_t))
 				#self.delta_BN_t = self.des_BN_t - self.last_BN_t
 				#print("delta_BN_t = " + str(self.delta_BN_t))

@@ -97,8 +97,10 @@ class InverseKinematics:
 		# Check to see if the point and angle are within the allowed range of motion
 		if(self.d > self.R):
 			print("Too far, can't reach that!")
+			rospy.logwarn("Too far, can't reach that!")
 		elif(self.d < self.r):
 			print("Too close, can't reach that either")
+			rospy.logwarn("Too close, can't reach that either")
 		# elif(self.theta_P > self.theta_max_E):
 		# 	print("Angle is too large")
 		# elif(self.theta_P < self.theta_min_C):

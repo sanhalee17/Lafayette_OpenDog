@@ -118,7 +118,12 @@ class ODriveNode(object):
         self.lim1high_topic   = rospy.get_param('~lim1high_topic', "odrive/odrive1_high_tib")
         self.lim2low_topic   = rospy.get_param('~lim2low_topic', "odrive/odrive1_low_fem")
         self.lim2high_topic   = rospy.get_param('~lim2high_topic', "odrive/odrive1_high_fem")
-        self.serial_number   = rospy.get_param('~odrive_serial', "3363314C3536")
+        self.serial_number   = rospy.get_param('~odrive_serial', "334931583536")
+        rospy.logwarn(self.serial_number)
+        #self.serial_number = "334931583536"
+        # if self.serial_number == 4:
+        #     self.serial_number = 334931583536
+
         # self.port_nunber = rospy.get_param('~odrive_port', "/dev/ttyACM0")
 
         print(self.mode)
@@ -800,7 +805,7 @@ class ODriveNode(object):
 
         self.last_cmd_vel_time = rospy.Time.now()   # change to be last_cmd_pos_time????
     def pub_current(self):
-        current_quantizer = 5
+        current_quantizer = 2 #update rate, initial value was 5, which means updating in 2 Hz (0.5s)
         
         self.left_current_accumulator += self.current_l
         self.right_current_accumulator += self.current_r
@@ -813,6 +818,8 @@ class ODriveNode(object):
             self.current_loop_count = 0
             self.left_current_accumulator = 0.0
             self.right_current_accumulator = 0.0
+            #time_value=rospy.Time.now()
+            #rospy.logwarn(time_value)
 
     def publish_odometry(self, time_now):
         # Edit by GGC on June 14: 

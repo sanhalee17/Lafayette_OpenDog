@@ -23,18 +23,22 @@ class FootPath:
 		self.foot_position = rospy.get_param('~foot_position', "/footPosition_1")
 		self.phase_shift = rospy.get_param('~phase_shift', 0.0)
 
-		self.x_center = rospy.get_param('~x_center', -2)
+		self.x_center = rospy.get_param('~x_center', -2.5)
 		self.y_center = rospy.get_param('~y_center', 25.0)
+		self.y_lift = rospy.get_param('~y_lift', 3.0)
+		self.x_stride = rospy.get_param('~x_stride',3.0)
+
+
 
 		# define parameters for sinusoidal path
 
-		self.leg_pace = 4 # pace of gait
+		self.leg_pace = rospy.get_param('~leg_pace', 0.0) # pace of gait
 
 		#self.x_center = -0.5
-		self.x_stride = 4
+		#self.x_stride = 3
 
 		#self.y_center = 25.0
-		self.y_lift = 4
+		#self.y_lift = 1
 
 
 		# Initialize "current" values

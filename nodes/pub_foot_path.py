@@ -20,6 +20,8 @@ class FootPath:
 		self.foot_position = rospy.get_param('~foot_position', "/footPosition_1")
 		self.delay =rospy.get_param('~delay', "/0")
 
+		self.phase_shift = 0
+
 		#create the sparse path. 
 		self.S = array([0,3,9,12,18])
 		# self.X = array([2,2,8,8,2])
@@ -42,6 +44,7 @@ class FootPath:
 		rospy.Timer(rospy.Duration(0.02), self.timer_callback, oneshot=False)
 
 
+
 	def timer_callback(self, data):
 		try:
 			time.sleep(0)
@@ -57,8 +60,8 @@ class FootPath:
 			#where are we at on THIS lap?
 			Srelative = self.Snow - (self.Laps*Smax)
 			#now where should the foot be?
-			self.xnow = interp(Srelative,self.S,self.X)
-			self.ynow = interp(Srelative,self.S,self.Y)
+			self.xnow = interp(Srelative,self.S,self.X) - self.phase_shift
+			self.ynow = interp(Srelative,self.S,self.Y) - self.phase_shift
 
 			# Create and publish PoseStamped message containing the (x,y) position of the foot
 			# Eventually will include z when hip motion is included
