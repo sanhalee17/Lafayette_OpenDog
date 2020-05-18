@@ -1,15 +1,35 @@
 # Lafayette_OpenDog
-   The repository contains:
-      1. OpenDog ROS launch file
-      2. OpenDog Ros Python nodes for 2D forward walking
-      3. Arduino ROS limit switch node
-      
-   # Nov.13.2019
+The repository contains:
+   1. OpenDog ROS launch files
+   2. OpenDog Ros Python nodes for 2D forward walking
+   3. Arduino ROS limit switch node
+   4. Drawings/ matlab calculations
+The package name is 'odrive_ros'. Recommend changing this in the future
+
+#Sub-Repository / Launch File Explanation
+
+1. **launch** folder stores launch files
+   - ```odrive_wlims.launch``` connects all odrives in series. 
+
+   - Takes about 3-5 mins to connect all. Pay attention to micro-USB conection
+
+   -```odrive_wlims_one.launch``` connects only one odrive.
+
+   -Only connects 4 odrives. Modify the launch file if necessary.
+
+   -command : ```roslaunch odrive_ros odrive_wlims.launch```
+   
+2. **nodes** contains nodes.
+   
+   -
+
+
+# Nov.13.2019
    1.Output funcions of limit switches were added to odrive_interface.py and odrive_node.py
    2. Inverse_kinematics.py is added to the package
-   # Nov.14.2019
+# Nov.14.2019
    The Arduino limit switch node is completed. Variable names may change in the future, but it is fully functioning
-   # Nov.21.2019
+# Nov.21.2019
    Limit switch is published on rising edge (modified in odrive_node.py)
    # Nov.24.2019
    The launch file (odrive_wlims.launch) has been modified. 6 odrive nodes are added with specified hex serial numbers, and 
