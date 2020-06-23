@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
-# Author: Gabrielle Conard, July 2019
+# Author: Sanha Lee, Will Pivik, Nov 2019 : added hip IK, which has not been tested
 # File: inverse_kinematics.py
 # This python script takes a given position of the foot (with respect to the hip)...
 # ...and finds the angles of the upper and lower leg (femur and tibia) required to achieve that position.
 
-#Co-author: Sanha Lee, Feb. 2020
-#Modified original 2D IK node into 3D node
 
 #basics
 import rospy
@@ -80,10 +78,7 @@ class InverseKinematics:
 		# self.sub = rospy.Subscriber("/footPosition",Pose, self.pos_callback)
 		self.sub = rospy.Subscriber(self.foot_position,PoseStamped, self.pos_callback)
 
-		#publish leg angles (two separate publishers)
-		#do I need to publish on a timer or only when I get a new value???
-		# self.femur = rospy.Publisher("/theta_f", Float64Stamped, queue_size = 1)
-		# self.tibia = rospy.Publisher("/theta_t",Float64Stamped, queue_size = 1)
+		
 		self.femur = rospy.Publisher(self.theta_f, Float64, queue_size = 1)
 		self.tibia = rospy.Publisher(self.theta_t, Float64, queue_size = 1)
 		self.hip = rospy.Publisher(self.theta_h, Float64, queue_size = 1)
