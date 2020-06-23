@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
 # Author: Gabrielle Conard, July 2019
+# Further modified by Sanha Lee and Will Pivik Nov 2019: timer and limit switch boolean messages are added
+# uncomment boolean messages when implementing the limit switches
+# it detects limit switch rising edge
+
 # File: motor_position.py
 # This python script takes the leg angles from inverse_kinematics...
 # ...and finds the positions of the two motors required to achieve those angles.
