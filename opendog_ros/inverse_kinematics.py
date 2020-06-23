@@ -16,8 +16,7 @@ import tf.transformations
 import tf_conversions
 import tf2_ros
 
-# Imports message types and services from several libraries
-from std_msgs.msg import Float64  #,Float64Stamped, Int32Stamped
+from std_msgs.msg import Float64  
 from geometry_msgs.msg import TwistStamped, TransformStamped, Pose, PoseStamped
 import std_srvs.srv
 
@@ -29,18 +28,8 @@ import Queue   # might not be needed
 
 class InverseKinematics:
 	def __init__(self):
-		#if you need parameters, use the following
-		#self.mything = rospy.get_param('param_name',default_value)
-
-		# Publishers and Subscribers
-		# Subscribe to a foot position P: (xP, yP)
-		# self.sub = rospy.Subscriber("/footPosition",Pose, self.pos_callback)
+		
 		self.sub = rospy.Subscriber("/footPosition",PoseStamped, self.pos_callback)
-
-		#publish leg angles (two separate publishers)
-		#do I need to publish on a timer or only when I get a new value???
-		# self.femur = rospy.Publisher("/theta_f", Float64Stamped, queue_size = 1)
-		# self.tibia = rospy.Publisher("/theta_t",Float64Stamped, queue_size = 1)
 		self.femur = rospy.Publisher("/theta_f", Float64, queue_size = 1)
 		self.tibia = rospy.Publisher("/theta_t",Float64, queue_size = 1)
 
@@ -91,10 +80,6 @@ class InverseKinematics:
 			print("Too far, can't reach that!")
 		elif(self.d < self.r):
 			print("Too close, can't reach that either")
-		# elif(self.theta_P > self.theta_max_E):
-		# 	print("Angle is too large")
-		# elif(self.theta_P < self.theta_min_C):
-		# 	print("Angle is too small")
 		else:
 			# Compute angles foot-hip-knee (theta_K) and hip-knee-foot (theta_HKP)
 			self.theta_K = arccos((self.length_f**2 + self.d**2 - self.length_t**2)/(2 * self.d * self.length_f))
@@ -102,8 +87,6 @@ class InverseKinematics:
 
 			# Calculate desired angle of femur (taking offsets into account)...
 			# ...and publish results
-			# self.theta_f = Float64Stamped()
-			# self.theta_f.header.stamp = rospy.Time.now()
 			self.theta_f = Float64()
 			self.theta_f = self.theta_P - self.theta_K - self.theta_K_shift + self.theta_H
 			print("theta_f: " + str(self.theta_f))
@@ -111,8 +94,6 @@ class InverseKinematics:
 
 			# Calculate desired angle of tibia (taking offsets into account)...
 			# ...and publish results
-			# self.theta_t = Float64Stamped()
-			# self.theta_t.header.stamp = rospy.Time.now()
 			self.theta_t = Float64()
 			self.theta_t = self.theta_HKP - self.theta_HKP_shift - self.theta_t_shift
 			print("theta_t: " + str(self.theta_t))
