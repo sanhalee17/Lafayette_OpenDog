@@ -19,9 +19,8 @@ The package name is 'odrive_ros'. Recommend changing this in the future
 
    -command : ```roslaunch odrive_ros odrive_wlims.launch```
    
-2. **nodes** contains nodes.
+2. **nodes** contains nodes that are used to run openDog.
    
-   -
 
 
 # Nov.13.2019
